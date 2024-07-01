@@ -70,7 +70,11 @@
         </tr>
         <tr>
           <td colspan="<%= world.members ? 1 : 2%>" align="center">
+            <% if (method == 2 || method == 3) { %>
+            <iframe src='<%= world.address.replace('https', 'http') %>/rs2.cgi?plugin=<%= method %>&world=<%= world.id %>&detail=<%= detail %>' frameborder="0" border="0" width="789" height="560" scrolling="no" allowfullscreen></iframe>
+            <% } else { %>
             <iframe src='<%= world.address %>/rs2.cgi?plugin=<%= method %>&world=<%= world.id %>&detail=<%= detail %>' frameborder="0" border="0" width="789" height="560" scrolling="no" allowfullscreen></iframe>
+            <% } %>
           </td>
         </tr>
       </table>
