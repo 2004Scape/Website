@@ -41,8 +41,10 @@ export default function (f, opts, next) {
 
         let members = WorldList.filter(x => x.members).length;
         let regions = {
-            'Central USA': 'us',
+            'United States': 'us',
             Germany: 'ger',
+            Australia: 'au',
+            Japan: 'jp',
             'Local Development': 'uk'
         };
         let freeRegions = WorldList.filter(x => x.region && !x.members)
