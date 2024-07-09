@@ -7,6 +7,7 @@
     "#lostcity/*": "./src/lostcity/*"
   },
   "scripts": {
+    "dev": "nodemon src/lostcity/app.ts",
     "start": "npm i && npm run ts-loader src/lostcity/app.ts",
     "ts-loader": "node --import @swc-node/register/esm-register --enable-source-maps --no-warnings"
   },
