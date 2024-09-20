@@ -114,7 +114,6 @@
       text-decoration: underline
     }
   </STYLE>
-  <script defer="defer" src="/js/runetek.js"></script>
   <script defer="defer" src="/js/mapview.js"></script>
 </head>
 
@@ -137,6 +136,11 @@
           </center>
           <p>
             <canvas id="canvas" width="635" height="503"></canvas>
+            <script>
+                window.onload = async () => {
+                    new MapView().run();
+                }
+            </script>
           <p>
             <center>
               <table width=500 bgcolor=black cellpadding=4 border=0>
