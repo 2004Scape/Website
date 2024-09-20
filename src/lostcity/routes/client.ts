@@ -120,7 +120,7 @@ export default function (f: any, opts: any, next: any) {
 
         return res.view('client', {
             world,
-            detail: req.query.detail,
+            detail: req.query.detail === 'low' ? 0 : 1,
             method: req.query.method
         });
     });
