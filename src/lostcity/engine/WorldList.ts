@@ -1,8 +1,5 @@
+import { db } from '#lostcity/db/query.js';
 import fs from 'fs';
-
-import LoginClient from '#lostcity/server/LoginClient.js';
-
-import Environment from '#lostcity/util/Environment.js';
 
 interface World {
     id: number
@@ -28,17 +25,13 @@ if (fs.existsSync('data/config/worlds.json')) {
     }
 }
 
-const login = new LoginClient();
-
 async function refreshWorldList() {
     for (const world of WorldList) {
-        world.players = await login.count(world.id + 9);
+        world.players = (await db.selectFrom('account').where('logged_in', '=', world.id + 9).select(db.fn.countAll().as('count')).executeTakeFirstOrThrow()).count as number;
     }
 }
 
-if (Environment.LOGIN_KEY) {
-    await refreshWorldList();
-    setInterval(refreshWorldList, 20000);
-}
+setImmediate(refreshWorldList);
+setInterval(refreshWorldList, 20000);
 
 export default WorldList;
