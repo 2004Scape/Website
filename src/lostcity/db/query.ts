@@ -7,10 +7,11 @@ import Environment from '#lostcity/util/Environment.js';
 const dialect = new MysqlDialect({
     pool: async () =>
         createPool({
-            database: Environment.DB_NAME as string,
-            host: Environment.DB_HOST as string,
-            user: Environment.DB_USER as string,
-            password: Environment.DB_PASS as string
+            database: Environment.DB_NAME,
+            host: Environment.DB_HOST,
+            port: Environment.DB_PORT,
+            user: Environment.DB_USER,
+            password: Environment.DB_PASS
         })
 });
 

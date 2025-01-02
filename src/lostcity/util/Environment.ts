@@ -11,6 +11,7 @@ export default {
     ADMIN_IP: tryParseString(process.env.ADMIN_IP, 'localhost'),
 
     DB_HOST: tryParseString(process.env.DB_HOST, ''),
+    DB_PORT: tryParseInt(process.env.DB_PORT, 3306),
     DB_USER: tryParseString(process.env.DB_USER, ''),
     DB_PASS: tryParseString(process.env.DB_PASS, ''),
     DB_NAME: tryParseString(process.env.DB_NAME, ''),
