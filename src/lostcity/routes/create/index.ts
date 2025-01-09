@@ -4,6 +4,8 @@ import { toDisplayName, toSafeName } from '#jagex2/jstring/JString.js';
 
 import { db } from '#lostcity/db/query.js';
 
+import Environment from '#lostcity/util/Environment.js';
+
 enum CreateStep {
     USERNAME,
     TERMS,
@@ -37,6 +39,7 @@ export default function (f: any, opts: any, next: any) {
             delete req.session.createUsername;
 
             return res.view('create/username', {
+                HTTPS_ENABLED: Environment.HTTPS_ENABLED,
                 error: createError
             });
         } else if (createStep === CreateStep.TERMS) {

@@ -84,7 +84,7 @@ export default function (f, opts, next) {
     });
 
     f.get('/detail', async (req, res) => {
-        return res.view('detail');
+        return res.view('detail', {HTTPS_ENABLED: Environment.HTTPS_ENABLED});
     });
 
     f.get('/manual', async (req, res) => {
@@ -112,7 +112,7 @@ export default function (f, opts, next) {
     });
 
     f.get('/downloads', async (req, res) => {
-        return res.view('downloads');
+        return res.view('downloads', {HTTPS_ENABLED: Environment.HTTPS_ENABLED});
     });
 
     next();
