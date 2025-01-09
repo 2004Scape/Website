@@ -58,6 +58,7 @@ export default function (f: any, opts: any, next: any) {
         newsposts = newsposts.limit(17);
 
         return res.view('news/index', {
+            HTTPS_ENABLED: Environment.HTTPS_ENABLED,
             category,
             page,
             more,
@@ -78,6 +79,7 @@ export default function (f: any, opts: any, next: any) {
         const next = await db.selectFrom('newspost').where('id', '>', req.params.id).where('category_id', '=', newspost.category_id).orderBy('id', 'asc').select('id').executeTakeFirst();
 
         return res.view('news/post', {
+            HTTPS_ENABLED: Environment.HTTPS_ENABLED,
             newspost,
             category,
             date: niceDate(newspost.date),

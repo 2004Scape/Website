@@ -6,14 +6,11 @@ import Environment from '#lostcity/util/Environment.js';
 
 export default function (f, opts, next) {
     f.get('/', async (req, res) => {
-        // Convert env variable to boolean
-        const HTTPS_ENABLED = process.env.HTTPS_ENABLED === 'true';
-        // Pass for header.ejs to determine https redirection 
-        return res.view('index', {HTTPS_ENABLED: HTTPS_ENABLED});
+        return res.view('index', {HTTPS_ENABLED: Environment.HTTPS_ENABLED});
     });
 
     f.get('/disclaimer', async (req, res) => {
-        return res.view('disclaimer');
+        return res.view('disclaimer', {HTTPS_ENABLED: Environment.HTTPS_ENABLED});
     });
 
     f.get('/title', async (req, res) => {
@@ -24,6 +21,7 @@ export default function (f, opts, next) {
 
         const latestNews = Environment.DB_HOST ? await db.selectFrom('newspost').orderBy('id', 'desc').limit(5).selectAll().execute() : [];
         return res.view('title', {
+            HTTPS_ENABLED: Environment.HTTPS_ENABLED,
             playerCount,
             newsposts: latestNews
         });
@@ -62,6 +60,7 @@ export default function (f, opts, next) {
         }
 
         return res.view('serverlist', {
+            HTTPS_ENABLED: Environment.HTTPS_ENABLED,
             detail: typeof req.query['hires.x'] !== 'undefined' ? 'high' : 'low',
             method: req.query.method,
             worlds: WorldList,
@@ -93,7 +92,7 @@ export default function (f, opts, next) {
     });
 
     f.get('/privacy', async (req, res) => {
-        return res.view('privacy');
+        return res.view('privacy', {HTTPS_ENABLED: Environment.HTTPS_ENABLED});
     });
 
     f.get('/support', async (req, res) => {
@@ -101,11 +100,11 @@ export default function (f, opts, next) {
     });
 
     f.get('/terms', async (req, res) => {
-        return res.view('terms');
+        return res.view('terms', {HTTPS_ENABLED: Environment.HTTPS_ENABLED});
     });
 
     f.get('/whychoosers', async (req, res) => {
-        return res.view('whychoosers');
+        return res.view('whychoosers', {HTTPS_ENABLED: Environment.HTTPS_ENABLED});
     });
 
     f.get('/worldmap', async (req, res) => {
