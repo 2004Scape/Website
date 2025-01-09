@@ -6,7 +6,10 @@ import Environment from '#lostcity/util/Environment.js';
 
 export default function (f, opts, next) {
     f.get('/', async (req, res) => {
-        return res.view('index');
+        // Convert env variable to boolean
+        const HTTPS_ENABLED = process.env.HTTPS_ENABLED === 'true';
+        // Pass for header.ejs to determine https redirection 
+        return res.view('index', {HTTPS_ENABLED: HTTPS_ENABLED});
     });
 
     f.get('/disclaimer', async (req, res) => {
