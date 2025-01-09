@@ -76,7 +76,7 @@ export default function (f, opts, next) {
     });
 
     f.get('/cookies', async (req, res) => {
-        return res.view('cookies');
+        return res.view('cookies', {HTTPS_ENABLED: Environment.HTTPS_ENABLED});
     });
 
     f.get('/copyright', async (req, res) => {
