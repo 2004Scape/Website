@@ -44,10 +44,12 @@ export default function (f: any, opts: any, next: any) {
             });
         } else if (createStep === CreateStep.TERMS) {
             return res.view('create/terms', {
+                HTTPS_ENABLED: Environment.HTTPS_ENABLED,
                 username: createUsername
             });
         } else if (createStep === CreateStep.PASSWORD) {
             return res.view('create/password', {
+                HTTPS_ENABLED: Environment.HTTPS_ENABLED,
                 username: createUsername,
                 error: createError
             });
@@ -55,7 +57,7 @@ export default function (f: any, opts: any, next: any) {
             delete req.session.createStep;
             delete req.session.createUsername;
 
-            return res.view('create/finish');
+            return res.view('create/finish', {HTTPS_ENABLED: Environment.HTTPS_ENABLED});
         }
     });
 
