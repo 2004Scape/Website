@@ -1,6 +1,6 @@
 import fs from 'fs';
 import path from 'path';
-import worldConfig from '/usr/src/app/prodWorldsConfig.js';
+import worldConfig from '/usr/src/prodWorldsConfig.js';
 
 const filePath = path.resolve('/usr/src/app/data/config/worlds.json');
 
