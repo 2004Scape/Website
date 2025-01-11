@@ -4,6 +4,8 @@ import { toDisplayName, toSafeName } from '#jagex2/jstring/JString.js';
 
 import { db } from '#lostcity/db/query.js';
 
+import Environment from '#lostcity/util/Environment.js';
+
 enum CreateStep {
     USERNAME,
     TERMS,
@@ -37,14 +39,17 @@ export default function (f: any, opts: any, next: any) {
             delete req.session.createUsername;
 
             return res.view('create/username', {
+                HTTPS_ENABLED: Environment.HTTPS_ENABLED,
                 error: createError
             });
         } else if (createStep === CreateStep.TERMS) {
             return res.view('create/terms', {
+                HTTPS_ENABLED: Environment.HTTPS_ENABLED,
                 username: createUsername
             });
         } else if (createStep === CreateStep.PASSWORD) {
             return res.view('create/password', {
+                HTTPS_ENABLED: Environment.HTTPS_ENABLED,
                 username: createUsername,
                 error: createError
             });
@@ -52,7 +57,7 @@ export default function (f: any, opts: any, next: any) {
             delete req.session.createStep;
             delete req.session.createUsername;
 
-            return res.view('create/finish');
+            return res.view('create/finish', {HTTPS_ENABLED: Environment.HTTPS_ENABLED});
         }
     });
 
