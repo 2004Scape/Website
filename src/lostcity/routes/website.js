@@ -56,7 +56,7 @@ export default function (f, opts, next) {
             .filter((x, i, self) => self.indexOf(x) == i);
 
         if (req.query.method == 4) {
-            return res.redirect('https://github.com/LostCityRS/Launcher/releases');
+            return res.redirect('https://github.com/LostCityRS/Launcher/releases/latest');
         }
 
         return res.view('serverlist', {
