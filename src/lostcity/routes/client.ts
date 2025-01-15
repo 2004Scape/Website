@@ -14,7 +14,7 @@ export default function (f: any, opts: any, next: any) {
         }
 
         const config: string[] = [
-            'viewerversion=100',
+            'viewerversion=101',
             `serverlist=${address}/serverlist.ws`,
             'loader_jar=loader.jar',
             'window_preferredwidth=774',

@@ -26,8 +26,12 @@ if (fs.existsSync('data/config/worlds.json')) {
 }
 
 async function refreshWorldList() {
-    for (const world of WorldList) {
-        world.players = (await db.selectFrom('account').where('logged_in', '=', world.id + 9).select(db.fn.countAll().as('count')).executeTakeFirstOrThrow()).count as number;
+    try {
+        for (const world of WorldList) {
+            world.players = (await db.selectFrom('account').where('logged_in', '=', world.id + 9).select(db.fn.countAll().as('count')).executeTakeFirstOrThrow()).count as number;
+        }
+    } catch (err) {
+        // no-op
     }
 }
 
