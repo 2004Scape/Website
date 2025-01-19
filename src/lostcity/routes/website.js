@@ -46,6 +46,7 @@ export default function (f, opts, next) {
             Germany: 'ger',
             Australia: 'au',
             Japan: 'jp',
+            Russia: 'rus',
             'Local Development': 'uk'
         };
         let freeRegions = WorldList.filter(x => x.region && !x.members)
