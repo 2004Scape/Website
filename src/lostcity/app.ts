@@ -72,6 +72,10 @@ async function registerAll(searchDir: string, importDir: string, prefix: string 
     }
 }
 
+fastify.setNotFoundHandler((request, reply) => {
+    reply.status(404).send();
+});
+
 await registerAll('src/lostcity/routes', '#lostcity/routes');
 
 fastify.listen(
