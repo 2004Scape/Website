@@ -25,7 +25,6 @@ function niceDate(date: Date) {
 }
 
 const categories = [
-    { id: 0, name: 'Game Updates', style: 'red' }, // temp
     { id: 1, name: 'Game Updates', style: 'red' },
     { id: 2, name: 'Website', style: 'lblue' },
     { id: 3, name: 'Customer Support', style: 'yellow' },
@@ -49,8 +48,8 @@ export default function (f: any, opts: any, next: any) {
 
         let category = null;
         if (cat > 0) {
-            category = categories.find(c => c.id == cat);
-            newsposts = newsposts.where('category', '=', cat);
+            category = categories.find(c => c.id == cat) ?? categories[0];
+            newsposts = newsposts.where('category', '=', category.id);
         }
 
         const nextPage = await newsposts
@@ -82,10 +81,9 @@ export default function (f: any, opts: any, next: any) {
             return res.redirect(302, '/news');
         }
 
-        const category = categories.find(c => c.id == newspost.category);
-        console.log(category);
-        const prev = await db.selectFrom('newspost').where('id', '<', req.params.id).where('category', '=', newspost.category).orderBy('id', 'desc').select('id').executeTakeFirst();
-        const next = await db.selectFrom('newspost').where('id', '>', req.params.id).where('category', '=', newspost.category).orderBy('id', 'asc').select('id').executeTakeFirst();
+        const category = categories.find(c => c.id == newspost.category) ?? categories[0];
+        const prev = await db.selectFrom('newspost').where('id', '<', req.params.id).where('category', '=', category.id).orderBy('id', 'desc').select('id').executeTakeFirst();
+        const next = await db.selectFrom('newspost').where('id', '>', req.params.id).where('category', '=', category.id).orderBy('id', 'asc').select('id').executeTakeFirst();
 
         return res.view('news/post', {
             HTTPS_ENABLED: Environment.HTTPS_ENABLED,
