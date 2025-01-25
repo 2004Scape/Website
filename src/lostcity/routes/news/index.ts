@@ -25,6 +25,7 @@ function niceDate(date: Date) {
 }
 
 const categories = [
+    { id: 0, name: 'Game Updates', style: 'red' }, // temp
     { id: 1, name: 'Game Updates', style: 'red' },
     { id: 2, name: 'Website', style: 'lblue' },
     { id: 3, name: 'Customer Support', style: 'yellow' },
@@ -82,6 +83,7 @@ export default function (f: any, opts: any, next: any) {
         }
 
         const category = categories.find(c => c.id == newspost.category);
+        console.log(category);
         const prev = await db.selectFrom('newspost').where('id', '<', req.params.id).where('category', '=', newspost.category).orderBy('id', 'desc').select('id').executeTakeFirst();
         const next = await db.selectFrom('newspost').where('id', '>', req.params.id).where('category', '=', newspost.category).orderBy('id', 'asc').select('id').executeTakeFirst();
 
