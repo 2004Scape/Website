@@ -44,7 +44,7 @@
         <% if (typeof category !== 'undefined') { %>
             <input type="radio" id="cat-<%= cat.id %>" name="category" value="<%= cat.id %>" <%= cat.id == category ? 'checked' : '' %> >
         <% } else if (typeof newspost !== 'undefined') { %>
-            <input type="radio" id="cat-<%= cat.id %>" name="category" value="<%= cat.id %>" <%= cat.id == newspost.category_id ? 'checked' : '' %> >
+            <input type="radio" id="cat-<%= cat.id %>" name="category" value="<%= cat.id %>" <%= cat.id == newspost.category ? 'checked' : '' %> >
         <% } else { %>
             <input type="radio" id="cat-<%= cat.id %>" name="category" value="<%= cat.id %>" <%= cat.name == 'Game Updates' ? 'checked' : '' %> >
         <% } %>

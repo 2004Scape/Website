@@ -31,7 +31,7 @@
           <tr>
             <td>
               <table width=350>
-                <% for (let i = 0; i < newsposts.length; i++) { const post = newsposts[i]; const day = post.date.getDate(); const month = post.date.toLocaleString('default', { month: 'short' }); const year = post.date.getFullYear(); %>
+                <% for (let i = 0; i < newsposts.length; i++) { const post = newsposts[i]; const day = post.created.getDate(); const month = post.created.toLocaleString('default', { month: 'short' }); const year = post.created.getFullYear(); %>
                 <tr><td><a href="/news/<%= post.id %>" class=c><%= post.title %></a></td><td align="right"><%= day %>-<%= month %>-<%= year %></td></tr>
                 <% } %>
               </table>
