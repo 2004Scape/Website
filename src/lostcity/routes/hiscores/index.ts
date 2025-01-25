@@ -1,5 +1,5 @@
-export default function (f, opts, next) {
-    f.get('/', async (req, res) => {
+export default function (f: any, opts: any, next: any) {
+    f.get('/', async (req: any, res: any) => {
         if (req.query.user && req.query.category) {
             return res.view('hiscores/user');
         } else if (req.query.user) {
