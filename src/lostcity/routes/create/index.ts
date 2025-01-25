@@ -66,7 +66,7 @@ export default function (f: any, opts: any, next: any) {
         const oneHourAgo = new Date();
         oneHourAgo.setHours(oneHourAgo.getHours() - 1);
 
-        const recentlyCreated = await db.selectFrom('account').where('registration_date', '>', oneHourAgo).where('registration_ip', '=', ip).selectAll().execute();
+        const recentlyCreated = await db.selectFrom('account').where('registration_date', '>', oneHourAgo.toString()).where('registration_ip', '=', ip).selectAll().execute();
         if (recentlyCreated.length >= 3) {
             req.session.createStep = CreateStep.USERNAME;
             req.session.createError = 'You have created too many accounts recently. Please try again later.';

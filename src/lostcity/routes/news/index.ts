@@ -24,6 +24,16 @@ function niceDate(date: Date) {
     return `${num} ${month} ${year}`;
 }
 
+const categories = [
+    { id: 1, name: 'Game Updates', style: 'red' },
+    { id: 2, name: 'Website', style: 'lblue' },
+    { id: 3, name: 'Customer Support', style: 'yellow' },
+    { id: 4, name: 'Technical', style: 'dblue' },
+    { id: 5, name: 'Community', style: 'green' },
+    { id: 6, name: 'Behind the Scenes', style: 'purple' },
+    { id: 7, name: 'Archived', style: 'white' }
+];
+
 export default function (f: any, opts: any, next: any) {
     f.get('/', async (req: any, res: any) => {
         if (!req.query.page) {
@@ -34,14 +44,12 @@ export default function (f: any, opts: any, next: any) {
 
         const { cat, page } = req.query;
 
-        const categories = await db.selectFrom('newspost_category').selectAll().execute();
-
         let newsposts = db.selectFrom('newspost').orderBy('id desc');
 
         let category = null;
         if (cat > 0) {
-            category = await db.selectFrom('newspost_category').where('id', '=', cat).selectAll().executeTakeFirst();
-            newsposts = newsposts.where('category_id', '=', cat);
+            category = categories.find(c => c.id == cat);
+            newsposts = newsposts.where('category', '=', cat);
         }
 
         const nextPage = await newsposts
@@ -73,16 +81,15 @@ export default function (f: any, opts: any, next: any) {
             return res.redirect(302, '/news');
         }
 
-        const category = await db.selectFrom('newspost_category').where('id', '=', newspost.category_id).selectAll().executeTakeFirst();
-        const categories = await db.selectFrom('newspost_category').selectAll().execute();
-        const prev = await db.selectFrom('newspost').where('id', '<', req.params.id).where('category_id', '=', newspost.category_id).orderBy('id', 'desc').select('id').executeTakeFirst();
-        const next = await db.selectFrom('newspost').where('id', '>', req.params.id).where('category_id', '=', newspost.category_id).orderBy('id', 'asc').select('id').executeTakeFirst();
+        const category = categories.find(c => c.id == newspost.category);
+        const prev = await db.selectFrom('newspost').where('id', '<', req.params.id).where('category', '=', newspost.category).orderBy('id', 'desc').select('id').executeTakeFirst();
+        const next = await db.selectFrom('newspost').where('id', '>', req.params.id).where('category', '=', newspost.category).orderBy('id', 'asc').select('id').executeTakeFirst();
 
         return res.view('news/post', {
             HTTPS_ENABLED: Environment.HTTPS_ENABLED,
             newspost,
             category,
-            date: niceDate(newspost.date),
+            date: niceDate(new Date(newspost.created)),
             categories,
             prev,
             next
@@ -101,15 +108,13 @@ export default function (f: any, opts: any, next: any) {
 
         const { post } = req.query;
 
-        const categories = await db.selectFrom('newspost_category').selectAll().execute();
-
         if (typeof post !== 'undefined') {
             const newspost = await db.selectFrom('newspost').where('id', '=', post).selectAll().executeTakeFirst();
             if (newspost) {
                 return res.view('news/create', {
                     HTTPS_ENABLED: Environment.HTTPS_ENABLED,
                     categories,
-                    date: niceDate(newspost.date),
+                    date: niceDate(new Date(newspost.created)),
                     post,
                     newspost
                 });
@@ -141,7 +146,7 @@ export default function (f: any, opts: any, next: any) {
             const updated = await db.updateTable('newspost').set({
                 title,
                 content: html,
-                category_id: category
+                category: category
             }).where('id', '=', post).executeTakeFirst();
 
             if (updated.numChangedRows == 1n) {
@@ -152,7 +157,7 @@ export default function (f: any, opts: any, next: any) {
             const row = await db.insertInto('newspost').values({
                 title,
                 content: html,
-                category_id: category
+                category: category
             }).executeTakeFirst();
 
             if (row.numInsertedOrUpdatedRows == 1n) {
@@ -161,7 +166,6 @@ export default function (f: any, opts: any, next: any) {
         }
 
         // failed to add/update post
-        const categories = await db.selectFrom('newspost_category').selectAll().execute();
 
         return res.view('news/create', {
             HTTPS_ENABLED: Environment.HTTPS_ENABLED,
@@ -182,8 +186,6 @@ export default function (f: any, opts: any, next: any) {
 
         const { post, title, html, category } = req.body;
 
-        const categories = await db.selectFrom('newspost_category').selectAll().execute();
-
         if (typeof post !== 'undefined') {
             const newspost = await db.selectFrom('newspost').where('id', '=', post).selectAll().executeTakeFirst();
             if (newspost) {
@@ -192,7 +194,7 @@ export default function (f: any, opts: any, next: any) {
                     categories,
                     post,
                     newspost,
-                    date: niceDate(newspost.date),
+                    date: niceDate(new Date(newspost.created)),
                     title,
                     category,
                     preview: html
