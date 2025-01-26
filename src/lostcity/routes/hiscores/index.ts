@@ -143,14 +143,14 @@ export default function (f: any, opts: any, next: any) {
             .where('account.username', '=', username)
             .orderBy('type', 'asc');
 
-            const results: {
-                account_id: number,
-                type: number,
-                level: number,
-                value: number | bigint,
-                date: string,
-                rank?: number
-            }[] = await combinedQuery.execute();
+        const results: {
+            account_id: number,
+            type: number,
+            level: number,
+            value: number | bigint,
+            date: string,
+            rank?: number
+        }[] = await combinedQuery.execute();
 
         if (results.length === 0) {
             return res.view('hiscores/no_results', {
