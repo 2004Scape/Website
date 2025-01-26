@@ -38,8 +38,12 @@
                                 <tr>
                                     <td align="right">
                                         <b>Rank</b><br>
-                                        <% for (let i = 0; i < results.length; i++) { %>
-                                            <%= i + 1 %><br>
+                                        <% for (const row of results) { %>
+                                            <% if (row.highlighted) { %>
+                                            <font color=yellow><%= row.rank %></font><br>
+                                            <% } else { %>
+                                            <%= row.rank %><br>
+                                            <% } %>
                                         <% } %>
                                         <% for (let i = 0; i < 21 - results.length; i++) { %>
                                             &nbsp;<br>
@@ -49,7 +53,11 @@
                                     <td>
                                         <b>Name</b><br>
                                         <% for (const row of results) { %>
+                                            <% if (row.highlighted) { %>
+                                            <font color=yellow><%= toDisplayName(row.username) %></font><br>
+                                            <% } else { %>
                                             <%= toDisplayName(row.username) %><br>
+                                            <% } %>
                                         <% } %>
                                         <% for (let i = 0; i < 21 - results.length; i++) { %>
                                             &nbsp;<br>
@@ -59,7 +67,11 @@
                                     <td>
                                         <b>Level</b><br>
                                         <% for (const row of results) { %>
+                                            <% if (row.highlighted) { %>
+                                            <font color=yellow><%= numberWithCommas(row.level) %></font><br>
+                                            <% } else { %>
                                             <%= numberWithCommas(row.level) %><br>
+                                            <% } %>
                                         <% } %>
                                         <% for (let i = 0; i < 21 - results.length; i++) { %>
                                             &nbsp;<br>
@@ -69,7 +81,11 @@
                                     <td align=right>
                                         <b>XP</b> <br>
                                         <% for (const row of results) { %>
+                                            <% if (row.highlighted) { %>
+                                            <font color=yellow><%= numberWithCommas(Math.trunc(row.value / 10)) %></font><br>
+                                            <% } else { %>
                                             <%= numberWithCommas(Math.trunc(row.value / 10)) %><br>
+                                            <% } %>
                                         <% } %>
                                         <% for (let i = 0; i < 21 - results.length; i++) { %>
                                             &nbsp;<br>
@@ -82,6 +98,45 @@
                 </table>
             </center>
         </td>
+    </tr>
+</table>
+
+<br>
+
+<table>
+    <tr>
+        <td>
+            <table width=200 bgcolor=black cellpadding=4>
+                <tr>
+                    <td class=b bgcolor=#474747 background=/img/stoneback.gif>
+                        <center>
+                            <form action="/hiscores"><b>Search by rank</b><br>
+                                <input type=number maxlength=12 size=12 name=rank value=""><br>
+                                <input type=hidden name=category value='<%= category.id %>'>
+                                <input type=submit value='Search' style="margin-top: 4px">
+                            </form>
+                        </center>
+                    </td>
+                </tr>
+            </table>
+        </td>
+
+        <!-- <td>&nbsp&nbsp&nbsp</td>
+
+        <td>
+            <table width=200 bgcolor=black cellpadding=4>
+                <tr>
+                    <td class=b bgcolor=#474747 background=/img/stoneback.gif>
+                        <center>
+                            <form action="/hiscores"><b>Search by name</b><br>
+                                <input type=text maxlength=12 size=12 name=username value=""><br>
+                                <input type=submit value='Search' style="margin-top: 4px">
+                            </form>
+                        </center>
+                    </td>
+                </tr>
+            </table>
+        </td> -->
     </tr>
 </table>
 

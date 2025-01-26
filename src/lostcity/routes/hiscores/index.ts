@@ -57,19 +57,49 @@ export default function (f: any, opts: any, next: any) {
             category = categories[0];
         }
 
-        // todo: ranking (only showing top 21 currently)
         let query = db.selectFrom(category.large ? 'hiscore_large' : 'hiscore')
             .innerJoin('account', 'account.id', category.large ? 'hiscore_large.account_id' : 'hiscore.account_id')
-            .selectAll()
+            .select(['account_id', 'type', 'level', 'value', 'date', 'account.username'])
             .where('type', '=', category.id);
 
         if (category.level) {
-            query = query.orderBy('level', 'desc');
+            query = query.orderBy('level', 'desc').orderBy('date', 'asc').select((eb) =>
+                eb.fn.agg<number>('row_number', [])
+                    .over((ob) => ob.partitionBy('type').orderBy('level', 'desc').orderBy('date', 'asc'))
+                    .as('rank')
+            );
         } else {
-            query = query.orderBy('value', 'desc');
+            query = query.orderBy('value', 'desc').orderBy('date', 'asc').select((eb) =>
+                eb.fn.agg<number>('row_number', [])
+                    .over((ob) => ob.partitionBy('type').orderBy('value', 'desc').orderBy('date', 'asc'))
+                    .as('rank')
+            );
         }
 
-        const results = await query.orderBy('date', 'asc').limit(21).execute();
+        query = query.limit(21);
+
+        if (req.query.rank && parseInt(req.query.rank) > 0) {
+            // note: RS has their rank search place the rank at the bottom of the list
+            query = query.offset(Math.max(parseInt(req.query.rank) - 21, 0));
+        }
+
+        const results: {
+            account_id: number,
+            type: number,
+            level: number,
+            value: number | bigint,
+            date: string,
+            rank?: number,
+            highlighted?: boolean
+        }[] = await query.execute();
+
+        if (req.query.rank && parseInt(req.query.rank) > 0) {
+            const rank = parseInt(req.query.rank);
+            const row = results.find(r => r.rank == rank);
+            if (row) {
+                row.highlighted = true;
+            }
+        }
 
         return res.view('hiscores/index', {
             HTTPS_ENABLED: Environment.HTTPS_ENABLED,
@@ -78,7 +108,8 @@ export default function (f: any, opts: any, next: any) {
             numberWithCommas,
             categories,
             category,
-            results
+            results,
+            rank: req.query.rank
         });
     });
 
