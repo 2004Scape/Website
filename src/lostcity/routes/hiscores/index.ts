@@ -143,6 +143,14 @@ export default function (f: any, opts: any, next: any) {
             .where('account.username', '=', username);
 
         const results = await combinedQuery.orderBy('type').execute();
+
+        if (results.length === 0) {
+            return res.view('hiscores/no_results', {
+                HTTPS_ENABLED: Environment.HTTPS_ENABLED,
+                toDisplayName,
+                username
+            })
+        }
         
         return res.view('hiscores/player', {
             HTTPS_ENABLED: Environment.HTTPS_ENABLED,
