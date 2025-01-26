@@ -54,9 +54,15 @@
                                         <b>Name</b><br>
                                         <% for (const row of results) { %>
                                             <% if (row.highlighted) { %>
-                                            <font color=yellow><%= toDisplayName(row.username) %></font><br>
+                                            <font color=yellow>
+                                                <a href='/hiscores/player/<%= row.username %>' class=c>
+                                                    <%= toDisplayName(row.username) %>
+                                                </a>
+                                            </font><br>
                                             <% } else { %>
-                                            <%= toDisplayName(row.username) %><br>
+                                            <a href='/hiscores/player/<%= row.username %>' class=c>
+                                                <%= toDisplayName(row.username) %>
+                                            </a><br>
                                             <% } %>
                                         <% } %>
                                         <% for (let i = 0; i < 21 - results.length; i++) { %>
