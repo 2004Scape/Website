@@ -114,7 +114,7 @@ export default function (f: any, opts: any, next: any) {
     });
 
     f.get('/player/:username', async (req: any, res: any) => {
-        const { username } = req.params;
+        const username = req.params.username || req.query.username;
 
         const columnsToSelect = ['account_id','h.type','h.level','h.value','h.date'] as const;
 
