@@ -11,6 +11,7 @@
             height: 100%;
             margin: 0;
             padding: 0;
+
             background-color: black;
             color: white;
             font-family: Arial, Helvetica, sans-serif;
@@ -47,6 +48,7 @@
         .gameframe {
             display: flex;
             flex-grow: 1;
+            width: 100%;
             border: none;
             margin: 0;
             padding: 0;
@@ -67,9 +69,7 @@
                 </div>
             </div>
 
-            <iframe class="gameframe"
-                src='<%= world.address %>/rs2.cgi?plugin=<%= method %>&world=<%= world.id %>&lowmem=<%= detail %>'
-                allowfullscreen></iframe>
+            <iframe class="gameframe" src='<%= world.address %>/rs2.cgi?plugin=<%= method %>&world=<%= world.id %>&lowmem=<%= detail %>' allowfullscreen></iframe>
         </div>
     </center>
 </body>
