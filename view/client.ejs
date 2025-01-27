@@ -13,11 +13,6 @@
             font-size: 11px;
         }
 
-        body {
-            margin: auto;
-            width: 50%;
-        }
-
         a {
             color: white;
             text-decoration: underline;
@@ -30,7 +25,6 @@
             vertical-align: top;
             display: inline-block;
             text-align: center;
-            width: 130px;
         }
 
         .caption {
@@ -44,19 +38,21 @@
 </head>
 
 <body>
-    <div class="gameframe-top align-image-text">
-        <img width="130px" src="/img/title/rslogo.gif">
+    <center>
+        <div class="gameframe-top align-image-text">
+            <img width="130px" src="/img/title/rslogo.gif">
 
-        <div class="caption">
-            <a href="/title">Main Menu</a> -
-            <a onclick="window.open('/worldmap', 'WorldMap', 'width=800,height=600');">World Map</a>
-            <a onclick="window.open('/hiscores', 'Hiscores', 'width=800,height=600');">Hiscores</a>
+            <div class="caption">
+                <a href="/title">Main Menu</a> -
+                <a onclick="window.open('/worldmap', 'WorldMap', 'width=800,height=600');">World Map</a> -
+                <a onclick="window.open('/hiscores', 'Hiscores', 'width=800,height=600');">Hiscores</a>
+            </div>
         </div>
-    </div>
 
-    <div class="gameframe">
-        <iframe src='<%= world.address %>/rs2.cgi?plugin=<%= method %>&world=<%= world.id %>&lowmem=<%= detail %>' frameborder="0" border="0" width="789" height="560" scrolling="no" allowfullscreen></iframe>
-    </div>
+        <div class="gameframe">
+            <iframe src='<%= world.address %>/rs2.cgi?plugin=<%= method %>&world=<%= world.id %>&lowmem=<%= detail %>' frameborder="0" border="0" width="789" height="560" scrolling="no" allowfullscreen></iframe>
+        </div>
+    </center>
 </body>
 
 </html>
