@@ -66,7 +66,6 @@ export default function (f: any, opts: any, next: any) {
         newsposts = newsposts.limit(17);
 
         return res.view('news/index', {
-            HTTPS_ENABLED: Environment.HTTPS_ENABLED,
             category,
             page,
             more,
@@ -86,7 +85,6 @@ export default function (f: any, opts: any, next: any) {
         const next = await db.selectFrom('newspost').where('id', '>', req.params.id).where('category', '=', category.id).orderBy('id', 'asc').select('id').executeTakeFirst();
 
         return res.view('news/post', {
-            HTTPS_ENABLED: Environment.HTTPS_ENABLED,
             newspost,
             category,
             date: niceDate(new Date(newspost.created)),
@@ -112,7 +110,6 @@ export default function (f: any, opts: any, next: any) {
             const newspost = await db.selectFrom('newspost').where('id', '=', post).selectAll().executeTakeFirst();
             if (newspost) {
                 return res.view('news/create', {
-                    HTTPS_ENABLED: Environment.HTTPS_ENABLED,
                     categories,
                     date: niceDate(new Date(newspost.created)),
                     post,
@@ -122,7 +119,6 @@ export default function (f: any, opts: any, next: any) {
         }
 
         return res.view('news/create', {
-            HTTPS_ENABLED: Environment.HTTPS_ENABLED,
             categories
         });
     });
@@ -168,7 +164,6 @@ export default function (f: any, opts: any, next: any) {
         // failed to add/update post
 
         return res.view('news/create', {
-            HTTPS_ENABLED: Environment.HTTPS_ENABLED,
             categories,
             post,
             date: niceDate(new Date()),
@@ -191,7 +186,6 @@ export default function (f: any, opts: any, next: any) {
             const newspost = await db.selectFrom('newspost').where('id', '=', post).selectAll().executeTakeFirst();
             if (newspost) {
                 return res.view('news/create', {
-                    HTTPS_ENABLED: Environment.HTTPS_ENABLED,
                     categories,
                     post,
                     newspost,
@@ -204,7 +198,6 @@ export default function (f: any, opts: any, next: any) {
         }
 
         return res.view('news/create', {
-            HTTPS_ENABLED: Environment.HTTPS_ENABLED,
             categories,
             post,
             date: niceDate(new Date()),

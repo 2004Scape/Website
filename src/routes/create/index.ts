@@ -9,8 +9,6 @@ import { db } from '#/db/query.js';
 
 import { toDisplayName, toSafeName } from '#/jstring/JString.js';
 
-import Environment from '#/util/Environment.js';
-
 enum CreateStep {
     USERNAME,
     TERMS,
@@ -49,17 +47,14 @@ export default function (f: any, opts: any, next: any) {
             delete req.session.createUsername;
 
             return res.view('create/username', {
-                HTTPS_ENABLED: Environment.HTTPS_ENABLED,
                 error: createError
             });
         } else if (createStep === CreateStep.TERMS) {
             return res.view('create/terms', {
-                HTTPS_ENABLED: Environment.HTTPS_ENABLED,
                 username: createUsername
             });
         } else if (createStep === CreateStep.PASSWORD) {
             return res.view('create/password', {
-                HTTPS_ENABLED: Environment.HTTPS_ENABLED,
                 username: createUsername,
                 error: createError
             });
@@ -67,7 +62,7 @@ export default function (f: any, opts: any, next: any) {
             delete req.session.createStep;
             delete req.session.createUsername;
 
-            return res.view('create/finish', {HTTPS_ENABLED: Environment.HTTPS_ENABLED});
+            return res.view('create/finish');
         }
     });
 
@@ -96,6 +91,8 @@ export default function (f: any, opts: any, next: any) {
                 return res.redirect('/create', 302);
             }
 
+            const displayName = toDisplayName(username);
+
             const BLOCKED_NAMES = [
                 // hey! stop that
                 'mod',
@@ -108,7 +105,7 @@ export default function (f: any, opts: any, next: any) {
                 'admin',
                 'administrator',
             ];
-            const blocked = BLOCKED_NAMES.includes(name) || profanity.hasMatch(name);
+            const blocked = BLOCKED_NAMES.includes(name) || profanity.hasMatch(displayName);
 
             if (blocked || name.startsWith(' ') || name.endsWith(' ') || name.startsWith('mod_') || name.startsWith('m0d_')) {
                 req.session.createStep = CreateStep.USERNAME;

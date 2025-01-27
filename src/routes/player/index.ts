@@ -1,5 +1,5 @@
 import { db } from '#/db/query.js';
-import Environment from '#/util/Environment.js';
+
 import LoggerEventType from '#/util/LoggerEventType.js';
 
 export default function (f: any, opts: any, next: any) {
@@ -10,7 +10,6 @@ export default function (f: any, opts: any, next: any) {
             const account = await db.selectFrom('account').where('username', '=', username).selectAll().executeTakeFirstOrThrow();
 
             return res.view('player/adventurelog', {
-                HTTPS_ENABLED: Environment.HTTPS_ENABLED,
                 account,
                 logs: await db.selectFrom('account_session').where('account_id', '=', account.id).where('event_type', '=', LoggerEventType.ADVENTURE).orderBy('timestamp desc').limit(100).selectAll().execute()
             });

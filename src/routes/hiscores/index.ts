@@ -1,8 +1,6 @@
 import { toDisplayName } from '#/jstring/JString.js';
 import { db } from '#/db/query.js';
 
-import Environment from '#/util/Environment.js';
-
 const categories = [
     { id: 0, name: 'Overall', large: true, level: true },
     { id: 1, name: 'Attack' },
@@ -102,7 +100,6 @@ export default function (f: any, opts: any, next: any) {
         }
 
         return res.view('hiscores/index', {
-            HTTPS_ENABLED: Environment.HTTPS_ENABLED,
             toDisplayName,
             getLevelByExp,
             numberWithCommas,
@@ -154,14 +151,12 @@ export default function (f: any, opts: any, next: any) {
 
         if (results.length === 0) {
             return res.view('hiscores/no_results', {
-                HTTPS_ENABLED: Environment.HTTPS_ENABLED,
                 toDisplayName,
                 username
             })
         }
         
         return res.view('hiscores/player', {
-            HTTPS_ENABLED: Environment.HTTPS_ENABLED,
             toDisplayName,
             numberWithCommas,
             username,

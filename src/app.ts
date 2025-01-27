@@ -41,6 +41,12 @@ fastify.setNotFoundHandler((request, reply) => {
     reply.status(404).send();
 });
 
+fastify.setErrorHandler(function (error, request, reply) {
+    if (error.validation) {
+        reply.status(400).send('');
+    }
+})
+
 await fastify.register(Autoload, {
     dir: 'src/routes',
     forceESM: true
