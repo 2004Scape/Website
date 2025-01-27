@@ -78,7 +78,7 @@ export default function (f: any, opts: any, next: any) {
     f.get('/:id', async (req: any, res: any) => {
         const newspost = await db.selectFrom('newspost').where('id', '=', req.params.id).selectAll().executeTakeFirst();
         if (!newspost) {
-            return res.redirect(302, '/news');
+            return res.redirect('/news', 302);
         }
 
         const category = categories.find(c => c.id == newspost.category) ?? categories[0];
@@ -101,9 +101,9 @@ export default function (f: any, opts: any, next: any) {
     });
 
     f.get('/create', async (req: any, res: any) => {
-        const ip = req.headers['cf-connecting-ip'] || req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+        const ip = req.headers['cf-connecting-ip'] || req.headers['x-forwarded-for'] || req.socket.remoteAddress;
         if (Environment.ADMIN_IP != ip) {
-            return res.redirect('/');
+            return res.redirect('/', 302);
         }
 
         const { post } = req.query;
@@ -128,9 +128,9 @@ export default function (f: any, opts: any, next: any) {
     });
 
     f.post('/create', async (req: any, res: any) => {
-        const ip = req.headers['cf-connecting-ip'] || req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+        const ip = req.headers['cf-connecting-ip'] || req.headers['x-forwarded-for'] || req.socket.remoteAddress;
         if (Environment.ADMIN_IP != ip) {
-            return res.redirect('/');
+            return res.redirect('/', 302);
         }
 
         const { post, title, html, category } = req.body;
@@ -138,7 +138,7 @@ export default function (f: any, opts: any, next: any) {
         if (typeof title === 'undefined' || !title.length ||
             typeof html === 'undefined' || !html.length ||
             typeof category === 'undefined' || !category.length) {
-            return res.redirect('/news/create');
+            return res.redirect('/news/create', 302);
         }
 
         if (typeof post !== 'undefined') {
@@ -150,7 +150,7 @@ export default function (f: any, opts: any, next: any) {
             }).where('id', '=', post).executeTakeFirst();
 
             if (updated.numChangedRows == 1n) {
-                return res.redirect('/news/' + post);
+                return res.redirect('/news/' + post, 302);
             }
         } else {
             // add post
@@ -161,7 +161,7 @@ export default function (f: any, opts: any, next: any) {
             }).executeTakeFirst();
 
             if (row.numInsertedOrUpdatedRows == 1n) {
-                return res.redirect('/news/' + post);
+                return res.redirect('/news/' + post, 302);
             }
         }
 
@@ -179,9 +179,10 @@ export default function (f: any, opts: any, next: any) {
     });
 
     f.post('/preview', async (req: any, res: any) => {
-        const ip = req.headers['cf-connecting-ip'] || req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+        console.log(req.socket.remoteAddress);
+        const ip = req.headers['cf-connecting-ip'] || req.headers['x-forwarded-for'] || req.socket.remoteAddress;
         if (Environment.ADMIN_IP != ip) {
-            return res.redirect('/');
+            return res.redirect('/', 302);
         }
 
         const { post, title, html, category } = req.body;

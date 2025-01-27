@@ -27,7 +27,7 @@ export default function (f: any, opts: any, next: any) {
                 req.session.createStep = CreateStep.USERNAME;
                 req.session.createError = `The username "${req.session.createUsername}" is already taken.`;
                 delete req.session.createUsername;
-                return res.redirect(302, '/create');
+                return res.redirect('/create', 302);
             }
         }
 
@@ -62,7 +62,7 @@ export default function (f: any, opts: any, next: any) {
     });
 
     f.post('/', async (req: any, res: any) => {
-        const ip = req.headers['cf-connecting-ip'] || req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+        const ip = req.headers['cf-connecting-ip'] || req.headers['x-forwarded-for'] || req.socket.remoteAddress;
         const oneHourAgo = new Date();
         oneHourAgo.setHours(oneHourAgo.getHours() - 1);
 
@@ -71,7 +71,7 @@ export default function (f: any, opts: any, next: any) {
             req.session.createStep = CreateStep.USERNAME;
             req.session.createError = 'You have created too many accounts recently. Please try again later.';
             delete req.session.createUsername;
-            return res.redirect('/create');
+            return res.redirect('/create', 302);
         }
 
         const { createStep } = req.session;
@@ -79,27 +79,33 @@ export default function (f: any, opts: any, next: any) {
         if (typeof username !== 'undefined') {
             const name = toSafeName(username);
 
-            const BLOCKED_NAMES = [
-                // thank you all
-                'andrew',
-                'paul',
-                'ian',
-                'ash'
-            ];
-            const blocked = BLOCKED_NAMES.includes(name);
-
-            if (blocked || name.startsWith('mod_') || name.startsWith('m0d_')) {
-                req.session.createStep = CreateStep.USERNAME;
-                req.session.createError = 'That username is not available.';
-                delete req.session.createUsername;
-                return res.redirect(302, '/create');
-            }
-
-            if (name.length < 1 || name.length > 12) {
+            if (name === 'invalid_name' || name.length < 1 || name.length > 12) {
                 req.session.createStep = CreateStep.USERNAME;
                 req.session.createError = 'You must enter a valid username.';
                 delete req.session.createUsername;
-                return res.redirect(302, '/create');
+                return res.redirect('/create', 302);
+            }
+
+            // todo: maybe run this through a simple profanity filter and check for variants
+            const BLOCKED_NAMES = [
+                // hey! stop that
+                'mod',
+                // thank you all:
+                'andrew',
+                'paul',
+                'ian',
+                'ash', // always mod ash but added anyways!
+                // extras
+                'admin',
+                'administrator',
+            ];
+            const blocked = BLOCKED_NAMES.includes(name);
+
+            if (blocked || name.startsWith(' ') || name.endsWith(' ') || name.startsWith('mod_') || name.startsWith('m0d_')) {
+                req.session.createStep = CreateStep.USERNAME;
+                req.session.createError = 'That username is not available.';
+                delete req.session.createUsername;
+                return res.redirect('/create', 302);
             }
 
             req.session.createUsername = toDisplayName(username);
@@ -108,7 +114,7 @@ export default function (f: any, opts: any, next: any) {
                 req.session.createStep = CreateStep.USERNAME;
                 req.session.createError = `The username "${req.session.createUsername}" is already taken.`;
                 delete req.session.createUsername;
-                return res.redirect(302, '/create');
+                return res.redirect('/create', 302);
             }
         }
 
@@ -119,17 +125,17 @@ export default function (f: any, opts: any, next: any) {
         } else if (createStep === CreateStep.PASSWORD) {
             if (!password || password.length < 5 || password.length > 20) {
                 req.session.createError = 'Your password must be between 5 and 20 characters long.';
-                return res.redirect(302, '/create');
+                return res.redirect('/create', 302);
             }
 
             if (password !== password2) {
                 req.session.createError = 'Your passwords do not match.';
-                return res.redirect(302, '/create');
+                return res.redirect('/create', 302);
             }
 
             if (terms !== 'yes') {
                 req.session.createError = 'You must agree to the terms and conditions to create an account.';
-                return res.redirect(302, '/create');
+                return res.redirect('/create', 302);
             }
 
             // case insensitivity is authentic :(
@@ -146,7 +152,7 @@ export default function (f: any, opts: any, next: any) {
             req.session.createStep = CreateStep.FINISH;
         }
 
-        return res.redirect(302, '/create');
+        return res.redirect('/create', 302);
     });
 
     next();

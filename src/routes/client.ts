@@ -102,20 +102,20 @@ export default function (f: any, opts: any, next: any) {
 
     f.get('/client', async (req: any, res: any) => {
         if (typeof req.query.detail == 'undefined' || !req.query.detail) {
-            return res.redirect(302, '/detail');
+            return res.redirect('/detail', 302);
         }
 
         if (typeof req.query.world == 'undefined' || !req.query.world) {
-            return res.redirect(302, '/detail');
+            return res.redirect('/detail', 302);
         }
 
         if (typeof req.query.method == 'undefined') {
-            return res.redirect(302, '/detail');
+            return res.redirect('/detail', 302);
         }
 
         const world = WorldList.find(x => x.id == req.query.world);
         if (!world) {
-            return res.redirect(302, '/detail');
+            return res.redirect('/detail', 302);
         }
 
         return res.view('client', {

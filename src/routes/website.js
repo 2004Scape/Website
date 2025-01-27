@@ -29,15 +29,15 @@ export default function (f, opts, next) {
 
     f.get('/serverlist', async (req, res) => {
         if (typeof req.query['lores.x'] == 'undefined' && typeof req.query['hires.x'] == 'undefined') {
-            return res.redirect(302, '/detail');
+            return res.redirect('/detail', 302);
         }
 
         if (!req.query['lores.x'] && !req.query['hires.x']) {
-            return res.redirect(302, '/detail');
+            return res.redirect('/detail', 302);
         }
 
         if (typeof req.query.method == 'undefined' || !req.query.method.length) {
-            return res.redirect(302, '/detail');
+            return res.redirect('/detail', 302);
         }
 
         let members = WorldList.filter(x => x.members).length;
