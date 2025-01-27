@@ -26,9 +26,9 @@ const categories = [
 
 // todo: move to db table
 const profiles = [
+    { id: 'alpha3', name: 'Alpha 3.0' }, // todo: primary/fallback should be configurable
     { id: 'alpha1', name: 'Alpha 1.0' },
     { id: 'alpha2', name: 'Alpha 2.0' },
-    { id: 'alpha3', name: 'Alpha 3.0' },
     { id: 'beta', name: 'Beta' },
 ];
 

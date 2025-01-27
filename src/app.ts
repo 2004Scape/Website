@@ -12,7 +12,9 @@ import ejs from 'ejs';
 
 import Environment from '#/util/Environment.js';
 
-const fastify = Fastify();
+const fastify = Fastify({
+    // logger: true
+});
 
 fastify.register(FormBody);
 fastify.register(Multipart);
