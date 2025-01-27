@@ -1,8 +1,13 @@
 import bcrypt from 'bcrypt';
-
-import { toDisplayName, toSafeName } from '#/jstring/JString.js';
+import {
+	RegExpMatcher,
+	englishDataset,
+	englishRecommendedTransformers,
+} from 'obscenity';
 
 import { db } from '#/db/query.js';
+
+import { toDisplayName, toSafeName } from '#/jstring/JString.js';
 
 import Environment from '#/util/Environment.js';
 
@@ -12,6 +17,11 @@ enum CreateStep {
     PASSWORD,
     FINISH
 }
+
+const profanity = new RegExpMatcher({
+    ...englishDataset.build(),
+    ...englishRecommendedTransformers,
+});
 
 export default function (f: any, opts: any, next: any) {
     f.get('/', async (req: any, res: any) => {
@@ -86,7 +96,6 @@ export default function (f: any, opts: any, next: any) {
                 return res.redirect('/create', 302);
             }
 
-            // todo: maybe run this through a simple profanity filter and check for variants
             const BLOCKED_NAMES = [
                 // hey! stop that
                 'mod',
@@ -99,7 +108,7 @@ export default function (f: any, opts: any, next: any) {
                 'admin',
                 'administrator',
             ];
-            const blocked = BLOCKED_NAMES.includes(name);
+            const blocked = BLOCKED_NAMES.includes(name) || profanity.hasMatch(name);
 
             if (blocked || name.startsWith(' ') || name.endsWith(' ') || name.startsWith('mod_') || name.startsWith('m0d_')) {
                 req.session.createStep = CreateStep.USERNAME;

@@ -23,7 +23,8 @@
     "ejs": "3.1.10",
     "fastify": "5.2.1",
     "kysely": "0.27.5",
-    "mysql2": "3.12.0"
+    "mysql2": "3.12.0",
+    "obscenity": "^0.4.3"
   },
   "devDependencies": {
     "@types/bcrypt": "5.0.2",
