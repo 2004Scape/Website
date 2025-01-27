@@ -1,73 +1,62 @@
 <html>
-  <head>
+
+<head>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=0.7, shrink-to-fit=no">
     <title>2004Scape Game</title>
 
     <style>
-      body,
-      td,
-      p {
-        font-family: Arial, Helvetica, sans-serif;
-        font-size: 11px;
-      }
-      body {
-        margin: 0px;
-        overflow: auto;
-      }
-      .b {
-        border-style: outset;
-        border-width: 3pt;
-        border-color: #373737;
-      }
-      .e {
-        border: 2px solid #382418;
-      }
-      .c {
-        text-decoration: none;
-      }
-      A.c:hover {
-        text-decoration: underline;
-      }
+        body {
+            background-color: black;
+            color: white;
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 11px;
+        }
+
+        body {
+            margin: auto;
+            width: 50%;
+        }
+
+        a {
+            color: white;
+            text-decoration: underline;
+            cursor: pointer;
+        }
+
+        .gameframe-top {
+            padding-top: 2px;
+
+            vertical-align: top;
+            display: inline-block;
+            text-align: center;
+            width: 130px;
+        }
+
+        .caption {
+            display: block;
+        }
+
+        .gameframe {
+            padding-top: 5px;
+        }
     </style>
-  </head>
-  <body bgcolor="black" text="white" link="#90c040" alink="#90c040" vlink="#90c040" style="margin: 2px 0 0 0 0;" marginwidth="0" marginheight="0" topmargin="2" leftmargin="0">
-    <center>
-      <table cellpadding="1" cellspacing="0">
-        <tr>
-          <td align="<%= world.members ? 'left' : 'center' %>">
-            <table <%- world.members ? '' : 'width="785"' %> cellpadding="1" cellspacing="0">
-              <tr>
-                <td align="center">
-                  <a href="/title" id="menulink">
-                    <img src="/img/jagexlogo_black.jpg" border="0"><br>
-                    <a href="/title"><font color="white">Main Menu</font></a> - <a style="text-decoration: underline; cursor: pointer;" onclick="window.open('/worldmap', 'WorldMap', 'width=800,height=600');"><font color="white">World Map</font></a>
-                  </a>
-                </td>
-                <td width="25"></td>
-                <td align="center">
-                  <iframe src="/banner?size=469" width="468" height="60" marginwidth="0" marginheight="0" frameborder="0" scrolling="no"></iframe>
-                </td>
-                <td width="25"></td>
-                <td align="right">
-                  <a href="/" target="newwin">
-                    <img src="/img/gamewin/realbanner.gif" border="0">
-                  </a>
-                </td>
-              </tr>
-            </table>
-          </td>
-        </tr>
-        <tr>
-          <td colspan="<%= world.members ? 1 : 2%>" align="center">
-            <% if (method == 2 || method == 3) { %>
-            <iframe src='<%= world.address.replace('https', 'http') %>/rs2.cgi?plugin=<%= method %>&world=<%= world.id %>&lowmem=<%= detail %>' frameborder="0" border="0" width="789" height="560" scrolling="no" allowfullscreen></iframe>
-            <% } else { %>
-            <iframe src='<%= world.address %>/rs2.cgi?plugin=<%= method %>&world=<%= world.id %>&lowmem=<%= detail %>' frameborder="0" border="0" width="789" height="560" scrolling="no" allowfullscreen></iframe>
-            <% } %>
-          </td>
-        </tr>
-      </table>
-    </center>
-  </body>
+</head>
+
+<body>
+    <div class="gameframe-top align-image-text">
+        <img width="130px" src="/img/title/rslogo.gif">
+
+        <div class="caption">
+            <a href="/title">Main Menu</a> -
+            <a onclick="window.open('/worldmap', 'WorldMap', 'width=800,height=600');">World Map</a>
+            <a onclick="window.open('/hiscores', 'Hiscores', 'width=800,height=600');">Hiscores</a>
+        </div>
+    </div>
+
+    <div class="gameframe">
+        <iframe src='<%= world.address %>/rs2.cgi?plugin=<%= method %>&world=<%= world.id %>&lowmem=<%= detail %>' frameborder="0" border="0" width="789" height="560" scrolling="no" allowfullscreen></iframe>
+    </div>
+</body>
+
 </html>
