@@ -16,7 +16,22 @@ enum CreateStep {
     FINISH
 }
 
-const profanity = new RegExpMatcher({
+const staticBlockedUsernames = [
+    // thank you all:
+    'Andrew',
+    'Paul',
+    'Ian',
+    'Ash', // always just "mod ash" but put some respect on em!
+    // and every other mod that contributed to the success and longevity of the game
+
+    // extras that players want to abuse and will surely circumvent :(
+    'Admin',
+    'Administrator',
+    'Mod',
+    'Moderator'
+];
+
+const blockedUsernames = new RegExpMatcher({
     ...englishDataset.build(),
     ...englishRecommendedTransformers,
 });
@@ -92,21 +107,7 @@ export default function (f: any, opts: any, next: any) {
             }
 
             const displayName = toDisplayName(username);
-
-            const BLOCKED_NAMES = [
-                // hey! stop that
-                'mod',
-                // thank you all:
-                'andrew',
-                'paul',
-                'ian',
-                'ash', // always mod ash but added anyways!
-                // extras
-                'admin',
-                'administrator',
-            ];
-            const blocked = BLOCKED_NAMES.includes(name) || profanity.hasMatch(displayName);
-
+            const blocked = blockedUsernames.hasMatch(displayName) || staticBlockedUsernames.includes(displayName);
             if (blocked || name.startsWith(' ') || name.endsWith(' ') || name.startsWith('mod_') || name.startsWith('m0d_')) {
                 req.session.createStep = CreateStep.USERNAME;
                 req.session.createError = 'That username is not available.';

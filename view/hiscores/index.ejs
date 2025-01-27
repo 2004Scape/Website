@@ -1,7 +1,7 @@
 <%- include('../_partial/header.ejs', { title: 'Hiscores' }); %>
 <%- include('../_components/frame-top.ejs'); %>
 <%- include('../_components/content-start.ejs'); %>
-<%- include('../_components/title-box.ejs', { title: '2004Scape Hiscores' }); %>
+<%- include('../_components/title-box.ejs', { title: '2004Scape ' + profile.name + ' Hiscores' }); %>
 
 <table>
     <tr>
@@ -29,7 +29,7 @@
 
         <td width=290>
             <center>
-                <b><%= category.name %> Hiscores</b><br>
+                <b><%= category.name %> <%= profile.name %> Hiscores</b><br>
 
                 <table width=300 height=400 bgcolor=black cellpadding=4>
                     <tr>

@@ -24,6 +24,14 @@ const categories = [
     { id: 21, name: 'Runecrafting' }
 ];
 
+// todo: move to db table
+const profiles = [
+    { id: 'alpha1', name: 'Alpha 1.0' },
+    { id: 'alpha2', name: 'Alpha 2.0' },
+    { id: 'alpha3', name: 'Alpha 3.0' },
+    { id: 'beta', name: 'Beta' },
+];
+
 const levelExperience = new Int32Array(99);
 
 let acc = 0;
@@ -50,6 +58,11 @@ function numberWithCommas(x: number) {
 
 export default function (f: any, opts: any, next: any) {
     f.get('/', async (req: any, res: any) => {
+        let profile = profiles.find(p => p.id == req.query.profile);
+        if (typeof profile === 'undefined') {
+            profile = profiles[0];
+        }
+
         let category = categories.find(c => c.id == req.query.category);
         if (typeof category === 'undefined') {
             category = categories[0];
@@ -58,7 +71,7 @@ export default function (f: any, opts: any, next: any) {
         let query = db.selectFrom(category.large ? 'hiscore_large' : 'hiscore')
             .innerJoin('account', 'account.id', category.large ? 'hiscore_large.account_id' : 'hiscore.account_id')
             .select(['account_id', 'type', 'level', 'value', 'date', 'account.username'])
-            .where('type', '=', category.id);
+            .where('type', '=', category.id).where('profile', '=', profile.id);
 
         if (category.level) {
             query = query.orderBy('level', 'desc').orderBy('date', 'asc').select((eb) =>
@@ -103,6 +116,7 @@ export default function (f: any, opts: any, next: any) {
             toDisplayName,
             getLevelByExp,
             numberWithCommas,
+            profile,
             categories,
             category,
             results,
@@ -111,6 +125,11 @@ export default function (f: any, opts: any, next: any) {
     });
 
     f.get('/player/:username', async (req: any, res: any) => {
+        let profile = profiles.find(p => p.id == req.query.profile);
+        if (typeof profile === 'undefined') {
+            profile = profiles[0];
+        }
+
         const username = req.params.username || req.query.username;
 
         const columnsToSelect = ['account_id','h.type','h.level','h.value','h.date'] as const;
@@ -121,7 +140,7 @@ export default function (f: any, opts: any, next: any) {
                 eb.fn.agg<number>('row_number', [])
                     .over((ob) => ob.partitionBy('type').orderBy('value', 'desc').orderBy('date', 'asc'))
                     .as('rank')
-            );
+            ).where('profile', '=', profile.id);
 
         const hiscoreLargeRankQuery = db.selectFrom('hiscore_large as h')
             .select([...columnsToSelect])
@@ -129,7 +148,7 @@ export default function (f: any, opts: any, next: any) {
                 eb.fn.agg<number>('row_number', [])
                     .over((ob) => ob.partitionBy('type').orderBy('level', 'desc').orderBy('date', 'asc'))
                     .as('rank')
-            );
+            ).where('profile', '=', profile.id);
 
         const combinedQuery = db.selectFrom(hiscoreRankQuery.unionAll(hiscoreLargeRankQuery).as('h'))
             .innerJoin('account', 'account.id', 'h.account_id')
@@ -152,6 +171,7 @@ export default function (f: any, opts: any, next: any) {
         if (results.length === 0) {
             return res.view('hiscores/no_results', {
                 toDisplayName,
+                profile,
                 username
             })
         }
@@ -159,6 +179,7 @@ export default function (f: any, opts: any, next: any) {
         return res.view('hiscores/player', {
             toDisplayName,
             numberWithCommas,
+            profile,
             username,
             categories,
             results

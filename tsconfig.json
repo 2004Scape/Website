@@ -10,7 +10,7 @@
     "paths": {
       "#/*": ["src/*"]
     },
-    "types": ["node", "vitest/globals"],
+    "types": ["node"],
     "sourceMap": true,
     "allowJs": true,
     "checkJs": false,

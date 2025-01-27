@@ -6,6 +6,7 @@ export default {
     WEB_PORT: tryParseInt(process.env.WEB_PORT, 80),
     ADMIN_IP: tryParseString(process.env.ADMIN_IP, 'localhost'),
 
+    DB_BACKEND: tryParseString(process.env.DB_BACKEND, 'sqlite'),
     DB_HOST: tryParseString(process.env.DB_HOST, ''),
     DB_PORT: tryParseInt(process.env.DB_PORT, 3306),
     DB_USER: tryParseString(process.env.DB_USER, ''),

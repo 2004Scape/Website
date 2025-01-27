@@ -12,6 +12,7 @@ interface World {
 
 const WorldList: World[] = [];
 
+// todo: move to db table
 if (fs.existsSync('data/config/worlds.json')) {
     try {
         const worlds: World[] = JSON.parse(fs.readFileSync('data/config/worlds.json', 'utf8'));
