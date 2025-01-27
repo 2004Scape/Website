@@ -6,61 +6,30 @@
     "#/*": "./src/*"
   },
   "scripts": {
-    "dev": "nodemon src/app.ts",
-    "start": "npm i && npm run ts-loader src/app.ts",
-    "ts-loader": "node --import @swc-node/register/esm-register --enable-source-maps --no-warnings"
-  },
-  "lint-staged": {
-    "package.json": "sort-package-json",
-    "*.{js,ts}": [
-      "npm run lint:staged",
-      "leasot --skip-unsupported --exit-nicely"
-    ]
+    "dev": "tsx --watch src/app.ts",
+    "start": "npm i && tsx src/app.ts"
   },
   "dependencies": {
-    "@fastify/cookie": "^9.3.1",
-    "@fastify/cors": "^9.0.1",
-    "@fastify/formbody": "^7.4.0",
-    "@fastify/multipart": "^8.2.0",
-    "@fastify/session": "^10.8.0",
-    "@fastify/static": "^7.0.4",
-    "@fastify/view": "^9.1.0",
-    "@types/ws": "^8.5.12",
-    "bcrypt": "^5.1.1",
-    "dotenv": "^16.4.5",
-    "ejs": "^3.1.10",
-    "fastify": "^4.27.0",
-    "kleur": "^4.1.5",
-    "kysely": "^0.27.3",
-    "mysql2": "^3.9.7",
-    "ws": "^8.18.0"
+    "@fastify/autoload": "6.0.3",
+    "@fastify/cookie": "11.0.2",
+    "@fastify/formbody": "8.0.2",
+    "@fastify/multipart": "9.0.3",
+    "@fastify/session": "11.1.0",
+    "@fastify/static": "8.0.4",
+    "@fastify/view": "10.0.2",
+    "bcrypt": "5.1.1",
+    "dotenv": "16.4.7",
+    "ejs": "3.1.10",
+    "fastify": "5.2.1",
+    "kysely": "0.27.5",
+    "mysql2": "3.12.0"
   },
   "devDependencies": {
-    "@commitlint/cli": "^19.3.0",
-    "@commitlint/config-conventional": "^19.2.2",
-    "@commitlint/types": "^19.0.3",
-    "@swc-node/register": "1.9.0",
-    "@swc/core": "1.5.7",
-    "@swc/helpers": "^0.5.11",
-    "@types/bcrypt": "^5.0.2",
-    "@types/ejs": "^3.1.5",
-    "@types/eslint": "^8.56.10",
-    "@types/node": "^20.12.12",
-    "@typescript-eslint/eslint-plugin": "^7.9.0",
-    "eslint": "^8.57.0",
-    "eslint-plugin-unused-imports": "^3.2.0",
-    "eslint-plugin-vitest": "^0.5.4",
-    "husky": "^9.0.11",
-    "leasot": "^13.3.0",
-    "lint-staged": "^15.2.2",
-    "nodemon": "^3.1.0",
-    "prettier": "3.2.5",
-    "sort-package-json": "^2.10.0",
-    "tinybench": "^2.8.0",
-    "typescript": "^5.4.5",
-    "vitest": "^1.6.0"
-  },
-  "optionalDependencies": {
-    "@rollup/rollup-linux-x64-gnu": "^4.9.5"
+    "@types/bcrypt": "5.0.2",
+    "@types/ejs": "3.1.5",
+    "@types/eslint": "9.6.1",
+    "@types/node": "22.10.10",
+    "tsx": "4.19.2",
+    "typescript": "5.7.3"
   }
 }

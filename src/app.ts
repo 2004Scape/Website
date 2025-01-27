@@ -1,14 +1,13 @@
-import fs from 'fs';
 import path from 'path';
 
 import Fastify from 'fastify';
+import Autoload from '@fastify/autoload';
 import FormBody from '@fastify/formbody';
 import Multipart from '@fastify/multipart';
 import Static from '@fastify/static';
 import View from '@fastify/view';
 import Cookie from '@fastify/cookie';
 import Session from '@fastify/session';
-import Cors from '@fastify/cors';
 import ejs from 'ejs';
 
 import Environment from '#/util/Environment.js';
@@ -38,45 +37,14 @@ fastify.register(Session, {
     }
 });
 
-if (!Environment.SKIP_CORS) {
-    fastify.register(Cors, {
-        origin: '*',
-        methods: ['GET']
-    });
-}
-
-const loaded: Set<string> = new Set();
-const ignored: Set<string> = new Set();
-
-// replaces @fastify/autoload which had some TS issues as the time of writing
-async function registerAll(searchDir: string, importDir: string, prefix: string = '') {
-    const entries = fs.readdirSync(searchDir);
-
-    for (const entry of entries) {
-        const entryPath = path.join(searchDir, entry);
-        const stat = fs.statSync(entryPath);
-
-        if (stat.isDirectory()) {
-            await registerAll(entryPath, importDir, prefix + '/' + entry);
-        } else if (stat.isFile() && (entry.endsWith('.js') || entry.endsWith('.ts'))) {
-            const full = importDir + prefix + '/' + entry;
-            if (loaded.has(full) || ignored.has(full)) {
-                continue;
-            }
-
-            fastify.register(await import(importDir + prefix + '/' + entry), {
-                prefix
-            });
-            loaded.add(full);
-        }
-    }
-}
-
 fastify.setNotFoundHandler((request, reply) => {
     reply.status(404).send();
 });
 
-await registerAll('src/lostcity/routes', '#lostcity/routes');
+await fastify.register(Autoload, {
+    dir: 'src/routes',
+    forceESM: true
+});
 
 fastify.listen(
     {
