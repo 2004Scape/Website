@@ -1,0 +1,50 @@
+<%- include('../_partial/header.ejs', { title: 'Hiscores' }); %>
+<%- include('../_components/frame-top.ejs'); %>
+<%- include('../_components/content-start.ejs'); %>
+<%- include('../_components/title-box.ejs', { title: '2004Scape Hiscores', links: [{ text: 'All Hiscores', href: '/hiscores' }] }); %>
+
+<table bgcolor="black" cellpadding="4" border="0">
+    <tbody>
+        <tr>
+            <td class="e">
+                <center>2004Scape Hiscores for <span style="color:yellow"><%= toDisplayName(username) %></span></center>
+                <p>
+                    <table>
+                        <tbody>
+                            <tr>
+                                <td colspan="3" width="120"><b>Skill</b></td>
+                                <td width="80" align="right"><b>Rank</b></td>
+                                <td width="80" align="right"><b>Level</b></td>
+                                <td width="80" align="right"><b>XP</b></td>
+                            </tr>
+                            <% for (const row of results) { %>
+                                <tr>
+                                    <td></td>
+                                    <td>&nbsp;</td>
+                                    <td>
+                                        <a href='/hiscores?username=<%= username.toLowerCase() %>&category=<%= row.type %>' class="c">
+                                            <%= categories.find(c => c.id == row.type).name %>
+                                        </a>
+                                    </td>
+                                    <td align="right">
+                                        <%= numberWithCommas(row.rank) %>
+                                    </td>
+                                    <td align="right">
+                                        <%= numberWithCommas(row.level) %>
+                                    </td>
+                                    <td align="right">
+                                        <%= numberWithCommas(row.value) %>
+                                    </td>
+                                </tr>
+                            <% } %>
+                        </tbody>
+                    </table>
+                    <br>
+                </p>
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+<%- include('../_components/content-end.ejs'); %>
+<%- include('../_partial/footer.ejs'); %>

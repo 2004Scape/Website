@@ -113,5 +113,62 @@ export default function (f: any, opts: any, next: any) {
         });
     });
 
+    f.get('/player/:username', async (req: any, res: any) => {
+        const username = req.params.username || req.query.username;
+
+        const columnsToSelect = ['account_id','h.type','h.level','h.value','h.date'] as const;
+
+        const hiscoreRankQuery = db.selectFrom('hiscore as h')
+            .select([...columnsToSelect])
+            .select((eb) =>
+                eb.fn.agg<number>('row_number', [])
+                    .over((ob) => ob.partitionBy('type').orderBy('value', 'desc').orderBy('date', 'asc'))
+                    .as('rank')
+            );
+
+        const hiscoreLargeRankQuery = db.selectFrom('hiscore_large as h')
+            .select([...columnsToSelect])
+            .select((eb) =>
+                eb.fn.agg<number>('row_number', [])
+                    .over((ob) => ob.partitionBy('type').orderBy('level', 'desc').orderBy('date', 'asc'))
+                    .as('rank')
+            );
+
+        const combinedQuery = db.selectFrom(hiscoreRankQuery.unionAll(hiscoreLargeRankQuery).as('h'))
+            .innerJoin('account', 'account.id', 'h.account_id')
+            .select([
+                ...columnsToSelect,
+                'h.rank',
+            ])
+            .where('account.username', '=', username)
+            .orderBy('type', 'asc');
+
+        const results: {
+            account_id: number,
+            type: number,
+            level: number,
+            value: number | bigint,
+            date: string,
+            rank?: number
+        }[] = await combinedQuery.execute();
+
+        if (results.length === 0) {
+            return res.view('hiscores/no_results', {
+                HTTPS_ENABLED: Environment.HTTPS_ENABLED,
+                toDisplayName,
+                username
+            })
+        }
+        
+        return res.view('hiscores/player', {
+            HTTPS_ENABLED: Environment.HTTPS_ENABLED,
+            toDisplayName,
+            numberWithCommas,
+            username,
+            categories,
+            results
+        });
+    });
+
     next();
 }
