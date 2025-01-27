@@ -7,6 +7,10 @@
 
     <style>
         body {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
             background-color: black;
             color: white;
             font-family: Arial, Helvetica, sans-serif;
@@ -19,8 +23,17 @@
             cursor: pointer;
         }
 
+        .container {
+            display: flex;
+            width: 100%;
+            height: 100%;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
         .gameframe-top {
             padding-top: 2px;
+            padding-bottom: 5px;
 
             vertical-align: top;
             display: inline-block;
@@ -32,25 +45,31 @@
         }
 
         .gameframe {
-            padding-top: 5px;
+            display: flex;
+            flex-grow: 1;
+            border: none;
+            margin: 0;
+            padding: 0;
         }
     </style>
 </head>
 
 <body>
     <center>
-        <div class="gameframe-top align-image-text">
-            <img width="130px" src="/img/title/rslogo.gif">
+        <div class="container">
+            <div class="gameframe-top align-image-text">
+                <img width="130px" src="/img/title/rslogo.gif">
 
-            <div class="caption">
-                <a href="/title">Main Menu</a> -
-                <a onclick="window.open('/worldmap', 'WorldMap', 'width=800,height=600');">World Map</a> -
-                <a onclick="window.open('/hiscores', 'Hiscores', 'width=800,height=600');">Hiscores</a>
+                <div class="caption">
+                    <a href="/title">Main Menu</a> -
+                    <a onclick="window.open('/worldmap', 'WorldMap', 'width=800,height=600');">World Map</a> -
+                    <a onclick="window.open('/hiscores', 'Hiscores', 'width=800,height=600');">Hiscores</a>
+                </div>
             </div>
-        </div>
 
-        <div class="gameframe">
-            <iframe src='<%= world.address %>/rs2.cgi?plugin=<%= method %>&world=<%= world.id %>&lowmem=<%= detail %>' frameborder="0" border="0" width="789" height="560" scrolling="no" allowfullscreen></iframe>
+            <iframe class="gameframe"
+                src='<%= world.address %>/rs2.cgi?plugin=<%= method %>&world=<%= world.id %>&lowmem=<%= detail %>'
+                allowfullscreen></iframe>
         </div>
     </center>
 </body>
