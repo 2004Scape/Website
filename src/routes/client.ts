@@ -47,7 +47,7 @@ export default function (f: any, opts: any, next: any) {
             'loading_app_resources=Loading application resources',
             'message=Message',
             'new_version=Launcher update available! Please visit the website to download the latest version.',
-            'new_version_link=http://2004scape.org/downloads',
+            'new_version_link=https://2004.lostcity.rs',
             'new_version_linktext=Open Homepage',
             'tandc=This game is copyright (c) 1999 - 2004 Jagex Ltd.\\Recreated and preserved 2023 - 2025.'
         ];

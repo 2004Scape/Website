@@ -72,48 +72,12 @@ export default function (f, opts, next) {
         });
     });
 
-    f.get('/play', async (req, res) => {
-        return res.redirect('/detail');
-    });
-
-    f.get('/cookies', async (req, res) => {
-        return res.view('cookies', {HTTPS_ENABLED: Environment.HTTPS_ENABLED});
-    });
-
-    f.get('/copyright', async (req, res) => {
-        return res.view('copyright');
-    });
-
     f.get('/detail', async (req, res) => {
         return res.view('detail', {HTTPS_ENABLED: Environment.HTTPS_ENABLED});
     });
 
-    f.get('/manual', async (req, res) => {
-        return res.view('manual');
-    });
-
-    f.get('/privacy', async (req, res) => {
-        return res.view('privacy', {HTTPS_ENABLED: Environment.HTTPS_ENABLED});
-    });
-
-    f.get('/support', async (req, res) => {
-        return res.view('support');
-    });
-
-    f.get('/terms', async (req, res) => {
-        return res.view('terms', {HTTPS_ENABLED: Environment.HTTPS_ENABLED});
-    });
-
-    f.get('/whychoosers', async (req, res) => {
-        return res.view('whychoosers', {HTTPS_ENABLED: Environment.HTTPS_ENABLED});
-    });
-
     f.get('/worldmap', async (req, res) => {
         return res.view('worldmap/applet');
-    });
-
-    f.get('/downloads', async (req, res) => {
-        return res.view('downloads', {HTTPS_ENABLED: Environment.HTTPS_ENABLED});
     });
 
     next();
