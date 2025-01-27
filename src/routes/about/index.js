@@ -1,4 +1,4 @@
-import Environment from '#lostcity/util/Environment.js';
+import Environment from '#/util/Environment.js';
 
 export default function (f, opts, next) {
     f.get('/', async (req, res) => {

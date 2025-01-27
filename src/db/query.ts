@@ -1,8 +1,8 @@
-import { DB } from '#lostcity/db/types.js';
 import { createPool } from 'mysql2';
 import { Kysely, MysqlDialect } from 'kysely';
 
-import Environment from '#lostcity/util/Environment.js';
+import { DB } from '#/db/types.js';
+import Environment from '#/util/Environment.js';
 
 const dialect = new MysqlDialect({
     pool: async () =>

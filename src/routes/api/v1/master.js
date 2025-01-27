@@ -1,4 +1,4 @@
-import WorldList from '#lostcity/engine/WorldList.js';
+import WorldList from '#/util/WorldList.js';
 
 export default function (f, opts, next) {
     f.get('/worldlist', async (req, res) => {

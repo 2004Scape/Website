@@ -11,7 +11,7 @@ import Session from '@fastify/session';
 import Cors from '@fastify/cors';
 import ejs from 'ejs';
 
-import Environment from '#lostcity/util/Environment.js';
+import Environment from '#/util/Environment.js';
 
 const fastify = Fastify();
 

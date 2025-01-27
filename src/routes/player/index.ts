@@ -1,6 +1,6 @@
-import { db } from '#lostcity/db/query.js';
-import Environment from '#lostcity/util/Environment.js';
-import LoggerEventType from '#lostcity/util/LoggerEventType.js';
+import { db } from '#/db/query.js';
+import Environment from '#/util/Environment.js';
+import LoggerEventType from '#/util/LoggerEventType.js';
 
 export default function (f: any, opts: any, next: any) {
     f.get('/adventurelog/:username', async (req: any, res: any) => {

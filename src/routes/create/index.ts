@@ -1,10 +1,10 @@
 import bcrypt from 'bcrypt';
 
-import { toDisplayName, toSafeName } from '#jagex2/jstring/JString.js';
+import { toDisplayName, toSafeName } from '#/jstring/JString.js';
 
-import { db } from '#lostcity/db/query.js';
+import { db } from '#/db/query.js';
 
-import Environment from '#lostcity/util/Environment.js';
+import Environment from '#/util/Environment.js';
 
 enum CreateStep {
     USERNAME,

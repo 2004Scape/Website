@@ -1,5 +1,5 @@
-import { db } from '#lostcity/db/query.js';
 import fs from 'fs';
+import { db } from '#/db/query.js';
 
 interface World {
     id: number

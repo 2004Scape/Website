@@ -1,5 +1,6 @@
 import 'dotenv/config';
-import { tryParseBoolean, tryParseInt, tryParseString} from './TryParse.js';
+
+import { tryParseBoolean, tryParseInt, tryParseString} from '#/util/TryParse.js';
 
 export default {
     PUBLIC_IP: tryParseString(process.env.PUBLIC_IP, 'localhost'),

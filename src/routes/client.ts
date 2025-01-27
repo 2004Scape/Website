@@ -1,6 +1,6 @@
-import WorldList from '#lostcity/engine/WorldList.js';
+import WorldList from '#/util/WorldList.js';
 
-import Environment from '#lostcity/util/Environment.js';
+import Environment from '#/util/Environment.js';
 
 export default function (f: any, opts: any, next: any) {
     f.get('/jav_config.ws', async (req: any, res: any) => {

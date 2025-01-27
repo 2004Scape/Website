@@ -3,13 +3,11 @@
   "version": "1.0.0",
   "type": "module",
   "imports": {
-    "#3rdparty/*": "./src/3rdparty/*",
-    "#jagex2/*": "./src/jagex/*",
-    "#lostcity/*": "./src/lostcity/*"
+    "#/*": "./src/*"
   },
   "scripts": {
-    "dev": "nodemon src/lostcity/app.ts",
-    "start": "npm i && npm run ts-loader src/lostcity/app.ts",
+    "dev": "nodemon src/app.ts",
+    "start": "npm i && npm run ts-loader src/app.ts",
     "ts-loader": "node --import @swc-node/register/esm-register --enable-source-maps --no-warnings"
   },
   "lint-staged": {

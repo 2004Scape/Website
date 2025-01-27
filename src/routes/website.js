@@ -1,8 +1,8 @@
-import { db } from '#lostcity/db/query.js';
+import { db } from '#/db/query.js';
 
-import WorldList from '#lostcity/engine/WorldList.js';
+import WorldList from '#/util/WorldList.js';
 
-import Environment from '#lostcity/util/Environment.js';
+import Environment from '#/util/Environment.js';
 
 export default function (f, opts, next) {
     f.get('/', async (req, res) => {

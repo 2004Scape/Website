@@ -1,7 +1,7 @@
-import { toDisplayName } from '#jagex2/jstring/JString.js';
-import { db } from '#lostcity/db/query.js';
+import { toDisplayName } from '#/jstring/JString.js';
+import { db } from '#/db/query.js';
 
-import Environment from '#lostcity/util/Environment.js';
+import Environment from '#/util/Environment.js';
 
 const categories = [
     { id: 0, name: 'Overall', large: true, level: true },
