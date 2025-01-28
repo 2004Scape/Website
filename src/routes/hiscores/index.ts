@@ -71,21 +71,12 @@ export default function (f: any, opts: any, next: any) {
         let query = db.selectFrom(category.large ? 'hiscore_large' : 'hiscore')
             .innerJoin('account', 'account.id', category.large ? 'hiscore_large.account_id' : 'hiscore.account_id')
             .select(['account_id', 'type', 'level', 'value', 'date', 'account.username'])
-            .where('type', '=', category.id).where('profile', '=', profile.id);
-
-        if (category.level) {
-            query = query.orderBy('level', 'desc').orderBy('date', 'asc').select((eb) =>
+            .where('type', '=', category.id).where('profile', '=', profile.id)
+            .orderBy(category.level ? 'level' : 'value', 'desc').orderBy('date', 'asc').select((eb) =>
                 eb.fn.agg<number>('row_number', [])
-                    .over((ob) => ob.partitionBy('type').orderBy('level', 'desc').orderBy('date', 'asc'))
+                    .over((ob) => ob.partitionBy('type').orderBy(category.level ? 'level' : 'value', 'desc').orderBy('date', 'asc'))
                     .as('rank')
             );
-        } else {
-            query = query.orderBy('value', 'desc').orderBy('date', 'asc').select((eb) =>
-                eb.fn.agg<number>('row_number', [])
-                    .over((ob) => ob.partitionBy('type').orderBy('value', 'desc').orderBy('date', 'asc'))
-                    .as('rank')
-            );
-        }
 
         query = query.limit(21);
 
