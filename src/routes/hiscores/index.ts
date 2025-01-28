@@ -144,7 +144,9 @@ export default function (f: any, opts: any, next: any) {
             profiles,
             categories,
             category,
-            results
+            results,
+            rank: req.query.rank,
+            username: req.query.username
         });
     });
 
