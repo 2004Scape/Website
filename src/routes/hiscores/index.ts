@@ -56,12 +56,23 @@ function numberWithCommas(x: number) {
     return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 }
 
+function resolveSelectedProfile(req: any): { id: string } {
+    let profile = profiles.find((p) => p.id === req.query.profile);
+  
+    if (!profile && req.session.selectedProfile) {
+        profile = profiles.find((p) => p.id === req.session.selectedProfile);
+    }
+    if (!profile) {
+        profile = profiles[0];
+    }
+    req.session.selectedProfile = profile.id;
+  
+    return profile;
+}
+
 export default function (f: any, opts: any, next: any) {
     f.get('/', async (req: any, res: any) => {
-        let profile = profiles.find(p => p.id == req.query.profile);
-        if (typeof profile === 'undefined') {
-            profile = profiles[0];
-        }
+        const profile = resolveSelectedProfile(req);
 
         let category = categories.find(c => c.id == req.query.category);
         if (typeof category === 'undefined') {
@@ -130,6 +141,7 @@ export default function (f: any, opts: any, next: any) {
             toDisplayName,
             numberWithCommas,
             profile,
+            profiles,
             categories,
             category,
             results
@@ -137,10 +149,7 @@ export default function (f: any, opts: any, next: any) {
     });
 
     f.get('/player/:username', async (req: any, res: any) => {
-        let profile = profiles.find(p => p.id == req.query.profile);
-        if (typeof profile === 'undefined') {
-            profile = profiles[0];
-        }
+        const profile = resolveSelectedProfile(req);
 
         const username = req.params.username || req.query.username;
 
@@ -184,6 +193,7 @@ export default function (f: any, opts: any, next: any) {
             return res.view('hiscores/no_results', {
                 toDisplayName,
                 profile,
+                profiles,
                 username
             })
         }
@@ -192,6 +202,7 @@ export default function (f: any, opts: any, next: any) {
             toDisplayName,
             numberWithCommas,
             profile,
+            profiles,
             username,
             categories,
             results
