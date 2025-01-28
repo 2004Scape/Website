@@ -89,9 +89,11 @@ export default function (f: any, opts: any, next: any) {
 
         query = query.limit(21);
 
-        if (req.query.rank && parseInt(req.query.rank) > 0) {
+        let selectedRank: number = req.query.rank ? parseInt(req.query.rank) : 0;
+
+        if (selectedRank > 0) {
             // note: RS has their rank search place the rank at the bottom of the list
-            query = query.offset(Math.max(parseInt(req.query.rank) - 21, 0));
+            query = query.offset(Math.max(selectedRank - 21, 0));
         }
 
         const results: {
@@ -104,9 +106,8 @@ export default function (f: any, opts: any, next: any) {
             highlighted?: boolean
         }[] = await query.execute();
 
-        if (req.query.rank && parseInt(req.query.rank) > 0) {
-            const rank = parseInt(req.query.rank);
-            const row = results.find(r => r.rank == rank);
+        if (selectedRank > 0) {
+            const row = results.find(r => r.rank == selectedRank);
             if (row) {
                 row.highlighted = true;
             }
