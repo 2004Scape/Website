@@ -2,7 +2,7 @@
 
 <head>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=0.7, shrink-to-fit=no">
+    <meta name="viewport" content="width=device-width, initial-scale=0.6, shrink-to-fit=no">
     <title>2004Scape Game</title>
 
     <style>
@@ -54,13 +54,19 @@
             padding: 0;
         }
     </style>
+
+    <script>
+        function hideTop() {
+            document.getElementById('gameframe-top').style.display = 'none';
+        }
+    </script>
 </head>
 
 <body>
     <center>
         <div class="container">
-            <div class="gameframe-top align-image-text">
-                <img width="130px" src="/img/title/rslogo.gif">
+            <div class="gameframe-top align-image-text" id="gameframe-top">
+                <img width="130px" src="/img/title/rslogo.gif" onclick="hideTop();">
 
                 <div class="caption">
                     <a href="/title">Main Menu</a> -
