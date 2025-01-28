@@ -106,13 +106,11 @@ export default function (f: any, opts: any, next: any) {
 
         return res.view('hiscores/index', {
             toDisplayName,
-            getLevelByExp,
             numberWithCommas,
             profile,
             categories,
             category,
-            results,
-            rank: req.query.rank
+            results
         });
     });
 
