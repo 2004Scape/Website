@@ -1,4 +1,4 @@
-import { toDisplayName } from '#/jstring/JString.js';
+import { toDisplayName, toSafeName } from '#/jstring/JString.js';
 import { db } from '#/db/query.js';
 
 const categories = [
@@ -81,6 +81,28 @@ export default function (f: any, opts: any, next: any) {
         query = query.limit(21);
 
         let selectedRank: number = req.query.rank ? parseInt(req.query.rank) : 0;
+
+        if (req.query.username) {
+            const username = toSafeName(req.query.username);
+
+            const usernameRankQuery = db.selectFrom(category.large ? 'hiscore_large' : 'hiscore')
+                .select(['account_id', 'type'])
+                .select((eb) =>
+                    eb.fn.agg<number>('row_number', [])
+                        .over((ob) => ob.partitionBy('type').orderBy(category.level ? 'level' : 'value', 'desc').orderBy('date', 'asc'))
+                        .as('rank')
+                ).where('profile', '=', profile.id);
+
+            const usernameRank = await db.selectFrom(usernameRankQuery.as('h'))
+                .innerJoin('account', 'account.id', 'h.account_id')
+                .select(['rank'])
+                .where('account.username', '=', username).where('type', '=', category.id)
+                .executeTakeFirst();
+
+            if (usernameRank && usernameRank.rank) {
+                selectedRank = usernameRank.rank
+            }
+        }
 
         if (selectedRank > 0) {
             // note: RS has their rank search place the rank at the bottom of the list
