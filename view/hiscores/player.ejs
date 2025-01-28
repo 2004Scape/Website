@@ -1,7 +1,8 @@
 <%- include('../_partial/header.ejs', { title: 'Hiscores' }); %>
 <%- include('../_components/frame-top.ejs'); %>
 <%- include('../_components/content-start.ejs'); %>
-<%- include('../_components/title-box.ejs', { title: '2004Scape ' + profile.name + ' Hiscores' }); %>
+<%- include('../_components/title-box.ejs', { title: '2004Scape ' + profile.name + ' Hiscores', links: [{ text: 'All Hiscores', href: '/hiscores' }] }); %>
+<%- include('./partials/profile.ejs', { profile, profiles }) %>
 
 <table bgcolor="black" cellpadding="4" border="0">
     <tbody>
@@ -46,5 +47,6 @@
     </tbody>
 </table>
 
+<%- include('./partials/search.ejs') %>
 <%- include('../_components/content-end.ejs'); %>
 <%- include('../_partial/footer.ejs'); %>

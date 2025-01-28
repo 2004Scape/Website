@@ -2,6 +2,7 @@
 <%- include('../_components/frame-top.ejs'); %>
 <%- include('../_components/content-start.ejs'); %>
 <%- include('../_components/title-box.ejs', { title: '2004Scape ' + profile.name + ' Hiscores' }); %>
+<%- include('./partials/profile.ejs', { profile, profiles }) %>
 
 <table>
     <tr>
@@ -107,45 +108,6 @@
     </tr>
 </table>
 
-<br>
-
-<table>
-    <tr>
-        <td>
-            <table width=200 bgcolor=black cellpadding=4>
-                <tr>
-                    <td class=b bgcolor=#474747 background=/img/stoneback.gif>
-                        <center>
-                            <form action="/hiscores"><b>Search by rank</b><br>
-                                <input type=number maxlength=12 size=12 name=rank value=""><br>
-                                <input type=hidden name=category value='<%= category.id %>'>
-                                <input type=submit value='Search' style="margin-top: 4px">
-                            </form>
-                        </center>
-                    </td>
-                </tr>
-            </table>
-        </td>
-
-        <td>&nbsp&nbsp&nbsp</td>
-
-        <td>
-            <table width=200 bgcolor=black cellpadding=4>
-                <tr>
-                    <td class=b bgcolor=#474747 background=/img/stoneback.gif>
-                        <center>
-                            <form action="/hiscores/player/">
-                                <b>Search by name</b><br>
-                                <input type=text maxlength=12 size=12 name=username value=""><br>
-                                <input type=submit value='Search' style="margin-top: 4px">
-                            </form>
-                        </center>
-                    </td>
-                </tr>
-            </table>
-        </td>
-    </tr>
-</table>
-
+<%- include('./partials/search.ejs', { category, rank, username }) %>
 <%- include('../_components/content-end.ejs'); %>
 <%- include('../_partial/footer.ejs'); %>

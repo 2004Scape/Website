@@ -1,4 +1,4 @@
-import { toDisplayName } from '#/jstring/JString.js';
+import { toDisplayName, toSafeName } from '#/jstring/JString.js';
 import { db } from '#/db/query.js';
 
 const categories = [
@@ -56,12 +56,23 @@ function numberWithCommas(x: number) {
     return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 }
 
+function resolveSelectedProfile(req: any): { id: string } {
+    let profile = profiles.find((p) => p.id === req.query.profile);
+  
+    if (!profile && req.session.selectedProfile) {
+        profile = profiles.find((p) => p.id === req.session.selectedProfile);
+    }
+    if (!profile) {
+        profile = profiles[0];
+    }
+    req.session.selectedProfile = profile.id;
+  
+    return profile;
+}
+
 export default function (f: any, opts: any, next: any) {
     f.get('/', async (req: any, res: any) => {
-        let profile = profiles.find(p => p.id == req.query.profile);
-        if (typeof profile === 'undefined') {
-            profile = profiles[0];
-        }
+        const profile = resolveSelectedProfile(req);
 
         let category = categories.find(c => c.id == req.query.category);
         if (typeof category === 'undefined') {
@@ -71,27 +82,42 @@ export default function (f: any, opts: any, next: any) {
         let query = db.selectFrom(category.large ? 'hiscore_large' : 'hiscore')
             .innerJoin('account', 'account.id', category.large ? 'hiscore_large.account_id' : 'hiscore.account_id')
             .select(['account_id', 'type', 'level', 'value', 'date', 'account.username'])
-            .where('type', '=', category.id).where('profile', '=', profile.id);
-
-        if (category.level) {
-            query = query.orderBy('level', 'desc').orderBy('date', 'asc').select((eb) =>
+            .where('type', '=', category.id).where('profile', '=', profile.id)
+            .orderBy(category.level ? 'level' : 'value', 'desc').orderBy('date', 'asc').select((eb) =>
                 eb.fn.agg<number>('row_number', [])
-                    .over((ob) => ob.partitionBy('type').orderBy('level', 'desc').orderBy('date', 'asc'))
+                    .over((ob) => ob.partitionBy('type').orderBy(category.level ? 'level' : 'value', 'desc').orderBy('date', 'asc'))
                     .as('rank')
             );
-        } else {
-            query = query.orderBy('value', 'desc').orderBy('date', 'asc').select((eb) =>
-                eb.fn.agg<number>('row_number', [])
-                    .over((ob) => ob.partitionBy('type').orderBy('value', 'desc').orderBy('date', 'asc'))
-                    .as('rank')
-            );
-        }
 
         query = query.limit(21);
 
-        if (req.query.rank && parseInt(req.query.rank) > 0) {
+        let selectedRank: number = req.query.rank ? parseInt(req.query.rank) : 0;
+
+        if (req.query.username) {
+            const username = toSafeName(req.query.username);
+
+            const usernameRankQuery = db.selectFrom(category.large ? 'hiscore_large' : 'hiscore')
+                .select(['account_id', 'type'])
+                .select((eb) =>
+                    eb.fn.agg<number>('row_number', [])
+                        .over((ob) => ob.partitionBy('type').orderBy(category.level ? 'level' : 'value', 'desc').orderBy('date', 'asc'))
+                        .as('rank')
+                ).where('profile', '=', profile.id);
+
+            const usernameRank = await db.selectFrom(usernameRankQuery.as('h'))
+                .innerJoin('account', 'account.id', 'h.account_id')
+                .select(['rank'])
+                .where('account.username', '=', username).where('type', '=', category.id)
+                .executeTakeFirst();
+
+            if (usernameRank && usernameRank.rank) {
+                selectedRank = usernameRank.rank
+            }
+        }
+
+        if (selectedRank > 0) {
             // note: RS has their rank search place the rank at the bottom of the list
-            query = query.offset(Math.max(parseInt(req.query.rank) - 21, 0));
+            query = query.offset(Math.max(selectedRank - 21, 0));
         }
 
         const results: {
@@ -104,9 +130,8 @@ export default function (f: any, opts: any, next: any) {
             highlighted?: boolean
         }[] = await query.execute();
 
-        if (req.query.rank && parseInt(req.query.rank) > 0) {
-            const rank = parseInt(req.query.rank);
-            const row = results.find(r => r.rank == rank);
+        if (selectedRank > 0) {
+            const row = results.find(r => r.rank == selectedRank);
             if (row) {
                 row.highlighted = true;
             }
@@ -114,21 +139,19 @@ export default function (f: any, opts: any, next: any) {
 
         return res.view('hiscores/index', {
             toDisplayName,
-            getLevelByExp,
             numberWithCommas,
             profile,
+            profiles,
             categories,
             category,
             results,
-            rank: req.query.rank
+            rank: req.query.rank,
+            username: req.query.username
         });
     });
 
     f.get('/player/:username', async (req: any, res: any) => {
-        let profile = profiles.find(p => p.id == req.query.profile);
-        if (typeof profile === 'undefined') {
-            profile = profiles[0];
-        }
+        const profile = resolveSelectedProfile(req);
 
         const username = req.params.username || req.query.username;
 
@@ -172,6 +195,7 @@ export default function (f: any, opts: any, next: any) {
             return res.view('hiscores/no_results', {
                 toDisplayName,
                 profile,
+                profiles,
                 username
             })
         }
@@ -180,6 +204,7 @@ export default function (f: any, opts: any, next: any) {
             toDisplayName,
             numberWithCommas,
             profile,
+            profiles,
             username,
             categories,
             results

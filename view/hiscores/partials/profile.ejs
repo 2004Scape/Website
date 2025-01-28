@@ -1,0 +1,33 @@
+<center>
+    <form id="profile-select-form" method="GET">
+        <select name="profile" id="profile" style="background-color: #B1977E;">
+            <% for (const p of profiles) { %>
+                <option value="<%= p.id %>" <%=profile && profile.id===p.id ? 'selected' : '' %>>
+                    <%= p.name %>
+                </option>
+            <% } %>
+        </select>
+    </form>
+</center>
+
+<script>
+    const form = document.getElementById('profile-select-form');
+    form.action = window.location.pathname; // Set the form action to the current URL
+
+    document.getElementById('profile').addEventListener('change', function () {
+        const params = new URLSearchParams(window.location.search);
+
+        // Preserve existing URL parameters
+        for (const [key, value] of params.entries()) {
+            if (key !== 'profile') {
+                const hiddenInput = document.createElement('input');
+                hiddenInput.type = 'hidden';
+                hiddenInput.name = key;
+                hiddenInput.value = value;
+                form.appendChild(hiddenInput);
+            }
+        }
+
+        form.submit();
+    });
+</script>
