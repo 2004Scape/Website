@@ -4,7 +4,8 @@
 <%- include('./_components/title-box.ejs', { title: 'Play 2004Scape', links: [ { text: 'Detail Select', href: '/detail' } ] }); %>
 
 <%- include('./_components/content-body-start.ejs'); %>
-<center><b>Anyone can play on the Free Worlds below</b><br><br>
+<center>
+    <b>Use these worlds to experience the game as a f2p player<br><br>
 <table>
   <tr valign="top">
     <% for (let i = 0; i < freeRegions.length; i++) { let regionWorlds = worlds.filter(x => x.region == freeRegions[i] && !x.members); %>
@@ -60,8 +61,8 @@
           <tr><td class=b bgcolor=#474747 background='/img/stoneback.gif'>
             <center>
             <a class=c>
-            <font color='#ffbb22'><b>Play for Free</b></font></a><br>
-              You won't need to pay now-- or ever! Play any way you want
+            <font color='#ffbb22'><b>Preservation First</b></font></a><br>
+            These worlds let you experience the game as it once was.<br>Free of charge!
             </center>
           </td></tr>
         </table>
@@ -116,8 +117,8 @@
           <tr><td class=b bgcolor=#474747 background='/img/stoneback.gif'>
             <center>
             <a class=c>
-            <font color='#ffbb22'><b>Play for Free</b></font></a><br>
-              You won't need to pay now-- or ever! Play any way you want
+            <font color='#ffbb22'><b>Preservation First</b></font></a><br>
+                These worlds let you experience the game as it once was.<br>Free of charge!
             </center>
           </td></tr>
         </table>
@@ -140,8 +141,10 @@
 </div>
 
 <center>
-<br><center><table width=500 bgcolor=black cellpadding=4 border=0><tr><td class=e>
-<br><center><b>Anyone can play on the Members Worlds below</b><br>Use these worlds to access members-only features<br><br>
+<br>
+
+<center><table width=500 bgcolor=black cellpadding=4 border=0><tr><td class=e>
+<center><b>Use these worlds to experience the game as a p2p player</b><br><br>
 <table>
   <tr valign="top">
     <% for (let i = 0; i < membersRegions.length; i++) { let regionWorlds = worlds.filter(x => x.region == membersRegions[i] && x.members); %>
