@@ -60,6 +60,7 @@ export default async function (app: FastifyInstance) {
             Japan: 'jp',
             Russia: 'rus',
             India: 'ind',
+            Sweden: 'swe',
             'Local Development': 'uk'
         };
         let freeRegions = WorldList.filter(x => x.region && !x.members)
