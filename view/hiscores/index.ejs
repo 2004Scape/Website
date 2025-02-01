@@ -57,12 +57,12 @@
                                             <% if (row.highlighted) { %>
                                             <font color=yellow>
                                                 <a href='/hiscores/player/<%= row.username %>' class=c>
-                                                    <%= toDisplayName(row.username) %>
+                                                    <%- toDisplayName(row.username) %>
                                                 </a>
                                             </font><br>
                                             <% } else { %>
                                             <a href='/hiscores/player/<%= row.username %>' class=c>
-                                                <%= toDisplayName(row.username) %>
+                                                <%- toDisplayName(row.username) %>
                                             </a><br>
                                             <% } %>
                                         <% } %>

@@ -115,7 +115,7 @@ export default function (f: any, opts: any, next: any) {
                 return res.redirect('/create', 302);
             }
 
-            req.session.createUsername = toDisplayName(username);
+            req.session.createUsername = displayName;
             const exists = await db.selectFrom('account').where('username', '=', name).selectAll().executeTakeFirst();
             if (exists) {
                 req.session.createStep = CreateStep.USERNAME;
