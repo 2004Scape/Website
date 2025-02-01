@@ -155,6 +155,17 @@ export default function (f: any, opts: any, next: any) {
                 return res.redirect('/create', 302);
             }
 
+            const name = toSafeName(username);
+
+            const displayName = toDisplayName(username);
+            const blocked = blockedUsernames.hasMatch(displayName) || staticBlockedUsernames.includes(displayName);
+            if (blocked || name.startsWith(' ') || name.endsWith(' ') || name.startsWith('mod_') || name.startsWith('m0d_')) {
+                req.session.createStep = CreateStep.USERNAME;
+                req.session.createError = 'That username is not available.';
+                delete req.session.createUsername;
+                return res.redirect('/create', 302);
+            }
+
             // case insensitivity is authentic :(
             const hash = await bcrypt.hash(password.toLowerCase(), 10);
             await db
