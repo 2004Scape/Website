@@ -59,5 +59,5 @@ export function toSafeName(name: string): string {
 }
 
 export function toDisplayName(name: string): string {
-    return toTitleCase(toSafeName(name).replaceAll('_', '&nbsp;'));
+    return toTitleCase(toSafeName(name).replaceAll('_', ' ')).replaceAll('_', '&nbsp;');
 }
