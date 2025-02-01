@@ -1,0 +1,51 @@
+<%- include('../_partial/header.ejs', { title: 'Security Centre Login' }); %>
+<%- include('../_components/frame-top.ejs'); %>
+<%- include('../_components/content-start.ejs'); %>
+<%- include('../_components/title-box.ejs', { title: 'Security Centre Login' }); %>
+
+<%- include('../_components/content-body-start.ejs'); %>
+<% if (success) { %>
+    <p class="green"><%= success %></p>
+<% } else if (error) { %>
+    <p class="red"><%= error %></p>
+<% } else { %>
+    <p>Enter your username & password.</p>
+<% } %>
+
+<form method="post">
+    <label for="username">Username:</label>
+    <input type="text" name="username">
+
+    <br>
+
+    <label for="password">Password:</label>
+    <input type="password" name="password">
+
+    <br><br>
+
+    <input type="submit" value="Login">
+</form>
+<%- include('../_components/content-body-end.ejs'); %>
+<br>
+
+<%- include('../_components/content-body-start.ejs'); %>
+<p>Or have you forgotten your password?</p>
+
+<form method="post" action="/account/forgot">
+    <label for="username">Username:</label>
+    <input type="text" name="username">
+
+    <br>Or<br>
+
+    <label for="password">Email:</label>
+    <input type="password" name="password">
+
+    <br><br>
+
+    <input type="submit" value="Send Password Reset">
+</form>
+<%- include('../_components/content-body-end.ejs'); %>
+<br>
+
+<%- include('../_components/content-end.ejs', { nobr: true }); %>
+<%- include('../_partial/footer.ejs'); %>

@@ -1,5 +1,6 @@
 import { toDisplayName, toSafeName } from '#/jstring/JString.js';
 import { db } from '#/db/query.js';
+import { profiles, resolveSelectedProfile } from '#/util/Profile.js';
 
 const categories = [
     { id: 0, name: 'Overall', large: true, level: true },
@@ -24,14 +25,6 @@ const categories = [
     { id: 21, name: 'Runecrafting' }
 ];
 
-// todo: move to db table
-const profiles = [
-    { id: 'alpha3', name: 'Alpha 3.0' }, // todo: primary/fallback should be configurable
-    { id: 'alpha1', name: 'Alpha 1.0' },
-    { id: 'alpha2', name: 'Alpha 2.0' },
-    { id: 'beta', name: 'Beta' },
-];
-
 const levelExperience = new Int32Array(99);
 
 let acc = 0;
@@ -54,20 +47,6 @@ function getLevelByExp(exp: number) {
 
 function numberWithCommas(x: number) {
     return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-}
-
-function resolveSelectedProfile(req: any): { id: string } {
-    let profile = profiles.find((p) => p.id === req.query.profile);
-  
-    if (!profile && req.session.selectedProfile) {
-        profile = profiles.find((p) => p.id === req.session.selectedProfile);
-    }
-    if (!profile) {
-        profile = profiles[0];
-    }
-    req.session.selectedProfile = profile.id;
-  
-    return profile;
 }
 
 export default function (f: any, opts: any, next: any) {

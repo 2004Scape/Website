@@ -1,0 +1,23 @@
+<%- include('../_partial/header.ejs', { title: 'Forgot Password - Security Centre' }); %>
+<%- include('../_components/frame-top.ejs'); %>
+<%- include('../_components/content-start.ejs'); %>
+<%- include('../_components/title-box.ejs', { title: 'Forgot Password - Security Centre' }); %>
+
+<%- include('../_components/content-body-start.ejs'); %>
+
+<% if (success) { %>
+    <p class="green"><%= success %></p>
+<% } else if (error) { %>
+    <p class="red"><%= error %></p>
+<% } %>
+
+<img src="https://i.imgur.com/XPTGP7i.jpeg"><br>
+
+Gotcha! Get a better memory next time.<br><br>
+
+Only kidding - Reach out on Discord for help until this automated system is complete :)
+<%- include('../_components/content-body-end.ejs'); %>
+<br>
+
+<%- include('../_components/content-end.ejs', { nobr: true }); %>
+<%- include('../_partial/footer.ejs'); %>

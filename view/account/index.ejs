@@ -1,0 +1,47 @@
+<%- include('../_partial/header.ejs', { title: 'Security Centre' }); %>
+<%- include('../_components/frame-top.ejs'); %>
+<%- include('../_components/content-start.ejs'); %>
+<%- include('../_components/title-box.ejs', { title: 'Security Centre', links: [ { text: 'Logout', href: '/account/logout' } ] }); %>
+
+<%- include('../_components/content-body-start.ejs'); %>
+
+<% if (success) { %>
+    <p class="green"><%= success %></p>
+<% } else if (error) { %>
+    <p class="red"><%= error %></p>
+<% } else { %>
+    <p>Change your password:</p>
+<% } %>
+
+<form method="post" action="/account/password">
+    <label for="password">Desired Password:</label>
+    <input type="password" name="password">
+
+    <br>
+
+    <label for="password">Confirm Password:</label>
+    <input type="password" name="password2">
+
+    <br><br>
+
+    <input type="submit" value="Update">
+</form>
+
+<%- include('../_components/content-body-end.ejs'); %>
+<br>
+
+<%- include('../_components/content-body-start.ejs'); %>
+<br>
+
+Export your player save:<br><br>
+
+<%- include('../hiscores/partials/profile.ejs', { profile, profiles }) %>
+<form method="post" action="/account/export">
+    <input type="submit" value="Download">
+</form>
+
+<%- include('../_components/content-body-end.ejs'); %>
+<br>
+
+<%- include('../_components/content-end.ejs', { nobr: true }); %>
+<%- include('../_partial/footer.ejs'); %>

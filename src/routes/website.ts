@@ -92,4 +92,8 @@ export default async function (app: FastifyInstance) {
     app.get('/worldmap', async (req, reply) => {
         return reply.view('worldmap/applet');
     });
+
+    app.get('/guide', async (req, reply) => {
+        return reply.view('guide');
+    });
 }

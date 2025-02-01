@@ -6,6 +6,7 @@ tsconfig.tsbuildinfo
 node_modules/
 
 data/config/worlds.json
+data/players/
 
 # coverage reports
 coverage/
