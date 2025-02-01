@@ -145,6 +145,16 @@ export default function (f: any, opts: any, next: any) {
                 return res.redirect('/create', 302);
             }
 
+            let { email } = req.body;
+            if (typeof email === 'undefined' || !email.length) {
+                email = null;
+            }
+
+            if (email !== null && !email.match(/^\S+@\S+\.\S+$/)) {
+                req.session.createError = 'You must enter a valid email address.';
+                return res.redirect('/create', 302);
+            }
+
             // case insensitivity is authentic :(
             const hash = await bcrypt.hash(password.toLowerCase(), 10);
             await db
@@ -152,6 +162,7 @@ export default function (f: any, opts: any, next: any) {
                 .values({
                     username: toSafeName(username),
                     password: hash,
+                    email,
                     registration_ip: ip
                 })
                 .execute();
