@@ -6,6 +6,7 @@ import { FastifyInstance } from 'fastify';
 import { db } from '#/db/query.js';
 
 import { profiles, resolveSelectedProfile } from '#/util/Profile.js';
+import { toSafeName } from '#/jstring/JString.js';
 
 export default async function (app: FastifyInstance) {
     app.get('/', async (req: any, res: any) => {
@@ -58,7 +59,7 @@ export default async function (app: FastifyInstance) {
     app.post('/login', async (req: any, res: any) => {
         const { username, password } = req.body;
 
-        const account = await db.selectFrom('account').where('username', '=', username).selectAll().executeTakeFirst();
+        const account = await db.selectFrom('account').where('username', '=', toSafeName(username)).selectAll().executeTakeFirst();
 
         if (!account || !(await bcrypt.compare(password.toLowerCase(), account.password))) {
             req.session.error = 'Invalid username or password.';
