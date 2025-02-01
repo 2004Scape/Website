@@ -1,11 +1,14 @@
 import bcrypt from 'bcrypt';
 import fs from 'fs';
 
+import { FastifyInstance } from 'fastify';
+
 import { db } from '#/db/query.js';
+
 import { profiles, resolveSelectedProfile } from '#/util/Profile.js';
 
-export default function (f: any, opts: any, next: any) {
-    f.get('/', async (req: any, res: any) => {
+export default async function (app: FastifyInstance) {
+    app.get('/', async (req: any, res: any) => {
         // todo: validation handler instead of in route
         if (!req.session.account) {
             return res.redirect('/account/login', 302);
@@ -25,7 +28,7 @@ export default function (f: any, opts: any, next: any) {
         });
     });
 
-    f.get('/login', async (req: any, res: any) => {
+    app.get('/login', async (req: any, res: any) => {
         const { success, error} = req.session;
         delete req.session.success;
         delete req.session.error;
@@ -36,12 +39,12 @@ export default function (f: any, opts: any, next: any) {
         });
     });
 
-    f.get('/logout', async (req: any, res: any) => {
+    app.get('/logout', async (req: any, res: any) => {
         req.session.account = null;
         return res.redirect('/account/login', 302);
     });
 
-    f.get('/forgot', async (req: any, res: any) => {
+    app.get('/forgot', async (req: any, res: any) => {
         const { success, error} = req.session;
         delete req.session.success;
         delete req.session.error;
@@ -52,7 +55,7 @@ export default function (f: any, opts: any, next: any) {
         });
     });
 
-    f.post('/login', async (req: any, res: any) => {
+    app.post('/login', async (req: any, res: any) => {
         const { username, password } = req.body;
 
         const account = await db.selectFrom('account').where('username', '=', username).selectAll().executeTakeFirst();
@@ -70,7 +73,7 @@ export default function (f: any, opts: any, next: any) {
         return res.redirect('/account', 302);
     });
 
-    f.post('/password', async (req: any, res: any) => {
+    app.post('/password', async (req: any, res: any) => {
         if (!req.session.account) {
             return res.redirect('/account/login', 302);
         }
@@ -94,23 +97,22 @@ export default function (f: any, opts: any, next: any) {
         return res.redirect('/account', 302);
     });
 
-    f.post('/forgot', async (req: any, res: any) => {
+    app.post('/forgot', async (req: any, res: any) => {
         return res.redirect('/account/forgot', 302);
     });
 
-    f.post('/export', async (req: any, res: any) => {
+    app.post('/export', async (req: any, reply) => {
         // todo: move to input validation
         if (!req.session.account) {
-            return res.redirect('/account', 302);
+            return reply.redirect('/account', 302);
         }
 
         const profile = resolveSelectedProfile(req);
         if (!fs.existsSync(`data/players/${profile.id}/${req.session.account.username}.sav`)) {
-            return res.redirect('/account', 302);
+            return reply.redirect('/account', 302);
         }
 
+        reply.header('Content-Disposition', `attachment; filename=${req.session.account.username}.sav`);   
         return fs.readFileSync(`data/players/${profile.id}/${req.session.account.username}.sav`);
     });
-
-    next();
 }
