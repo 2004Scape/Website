@@ -2,6 +2,7 @@ import { FastifyInstance } from 'fastify';
 
 import { db } from '#/db/query.js';
 import { toDisplayName } from '#/jstring/JString.js';
+import LoggerEventType from '#/util/LoggerEventType.js';
 
 function toDisplayCoord(coord: number) {
     const level = (coord >> 28) & 0x3;
@@ -53,13 +54,15 @@ export default async function (app: FastifyInstance) {
                 account,
                 sessions: await db.selectFrom('session').where('account_id', '=', account.id)
                     .orderBy('timestamp desc').limit(100).selectAll().execute(),
-                logs: await db.selectFrom('account_session').where('account_id', '=', account.id)
-                    .orderBy('timestamp desc').limit(100).selectAll().execute(),
                 chats: await db.selectFrom('public_chat').where('account_id', '=', account.id)
                     .orderBy('timestamp desc').limit(100).selectAll().execute(),
                 pms: await db.selectFrom('private_chat').where('account_id', '=', account.id)
                     .leftJoin('account', 'private_chat.to_account_id', 'account.id')
-                    .orderBy('timestamp desc').limit(100).selectAll().execute()
+                    .orderBy('timestamp desc').limit(100).selectAll().execute(),
+                logs: await db.selectFrom('account_session').where('account_id', '=', account.id).where('event_type', '!=', LoggerEventType.WEALTH)
+                    .orderBy('timestamp desc').limit(100).selectAll().execute(),
+                wealth: await db.selectFrom('account_session').where('account_id', '=', account.id).where('event_type', '=', LoggerEventType.WEALTH)
+                    .orderBy('timestamp desc').limit(100).selectAll().execute(),
             });
         } catch (err) {
             console.error(err);
