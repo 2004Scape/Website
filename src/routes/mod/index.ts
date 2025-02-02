@@ -39,16 +39,27 @@ export default async function (app: FastifyInstance) {
 
             const { username } = req.params;
     
-            const account = await db.selectFrom('account').where('username', '=', username).selectAll().executeTakeFirstOrThrow();
+            const account = await db.selectFrom('account').where('username', '=', username).selectAll().executeTakeFirst();
+
+            if (!account) {
+                return res.view('mod/notfound', {
+                    username
+                });
+            }
 
             return res.view('mod/overview', {
                 toDisplayName,
                 toDisplayCoord,
                 account,
-                sessions: await db.selectFrom('session').where('account_id', '=', account.id).orderBy('timestamp desc').limit(100).selectAll().execute(),
-                logs: await db.selectFrom('account_session').where('account_id', '=', account.id).orderBy('timestamp desc').limit(100).selectAll().execute(),
-                chats: await db.selectFrom('public_chat').where('account_id', '=', account.id).orderBy('timestamp desc').limit(100).selectAll().execute(),
-                pms: await db.selectFrom('private_chat').where('account_id', '=', account.id).leftJoin('account', 'private_chat.to_account_id', 'account.id').orderBy('timestamp desc').limit(100).selectAll().execute()
+                sessions: await db.selectFrom('session').where('account_id', '=', account.id)
+                    .orderBy('timestamp desc').limit(100).selectAll().execute(),
+                logs: await db.selectFrom('account_session').where('account_id', '=', account.id)
+                    .orderBy('timestamp desc').limit(100).selectAll().execute(),
+                chats: await db.selectFrom('public_chat').where('account_id', '=', account.id)
+                    .orderBy('timestamp desc').limit(100).selectAll().execute(),
+                pms: await db.selectFrom('private_chat').where('account_id', '=', account.id)
+                    .leftJoin('account', 'private_chat.to_account_id', 'account.id')
+                    .orderBy('timestamp desc').limit(100).selectAll().execute()
             });
         } catch (err) {
             console.error(err);
@@ -69,6 +80,54 @@ export default async function (app: FastifyInstance) {
                     .innerJoin('account', 'report.account_id', 'account.id').select('account.username')
                     .orderBy('timestamp desc').execute(),
                 reasons
+            });
+        } catch (err) {
+            console.error(err);
+            res.redirect('/', 302);
+        }
+    });
+
+    app.get('/uid/:uid',  async (req: any, res: any) => {
+        try {
+            if (!req.session.account || req.session.account.staffmodlevel < 1) {
+                return res.redirect('/account/login', 302);
+            }
+
+            const { uid } = req.params;
+
+            const sessions = await db.selectFrom('session').select('uid')
+                .where('uid', '=', uid)
+                .groupBy('account_id')
+                .leftJoin('account', 'session.account_id', 'account.id').select('account.username')
+                .execute();
+
+            return res.view('mod/uid', {
+                toDisplayName,
+                sessions
+            });
+        } catch (err) {
+            console.error(err);
+            res.redirect('/', 302);
+        }
+    });
+
+    app.get('/ip/:ip',  async (req: any, res: any) => {
+        try {
+            if (!req.session.account || req.session.account.staffmodlevel < 1) {
+                return res.redirect('/account/login', 302);
+            }
+
+            const { ip } = req.params;
+
+            const sessions = await db.selectFrom('session').select('ip')
+                .where('ip', '=', ip)
+                .groupBy('account_id')
+                .leftJoin('account', 'session.account_id', 'account.id').select('account.username')
+                .execute();
+
+            return res.view('mod/ip', {
+                toDisplayName,
+                sessions
             });
         } catch (err) {
             console.error(err);

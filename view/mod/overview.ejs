@@ -17,7 +17,7 @@ Muted until: <strong><%= account.muted_until.toISOString().replace("T"," ").subs
 <div style="height: 500px; overflow-y: scroll">
     <% for (const session of sessions) { %>
         <div style="text-align: left">
-            World: <strong><%= session.world - 9 %></strong>, IP: <strong><%= session.ip %></strong>, UID: <strong><%= session.uid %></strong>
+            World: <strong><%= session.world - 9 %></strong>, IP: <strong><a href="/mod/ip/<%= session.ip %>"><%= session.ip.substring(0, 32); %></a></strong>, UID: <strong><a href="/mod/uid/<%= session.uid %>"><%= session.uid %></a></strong>
 
             <span style="float: right">
                 <%= session.timestamp.toISOString().replace("T"," ").substring(0, 19); %>

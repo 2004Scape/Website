@@ -1,0 +1,24 @@
+<%- include('../_partial/header.ejs', { title: 'Lookup by IP' }); %>
+<%- include('../_components/frame-top.ejs'); %>
+<%- include('../_components/content-start.ejs'); %>
+<%- include('../_components/title-box.ejs', { title: "Lookup by IP" }); %>
+
+<%- include('../_components/content-body-start.ejs'); %>
+<div style="height: 500px; overflow-y: scroll">
+    <% for (const session of sessions) { %>
+        <div style="text-align: left">
+            <span style="float: right">
+                <%= session.ip %>
+            </span>
+
+            <br>
+
+            <a href="/mod/overview/<%= session.username %>"><%= toDisplayName(session.username); %></a>
+        </div>
+        <hr>
+    <% } %>
+</div>
+<%- include('../_components/content-body-end.ejs'); %>
+
+<%- include('../_components/content-end.ejs'); %>
+<%- include('../_partial/footer.ejs'); %>
