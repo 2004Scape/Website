@@ -17,7 +17,7 @@ Muted until: <strong><%= account.muted_until.toISOString().replace("T"," ").subs
 <div style="height: 500px; overflow-y: scroll">
     <% for (const session of sessions) { %>
         <div style="text-align: left">
-            World: <strong><%= session.world %></strong>, IP: <strong><%= session.ip %></strong>, UID: <strong><%= session.uid %></strong>
+            World: <strong><%= session.world - 9 %></strong>, IP: <strong><%= session.ip %></strong>, UID: <strong><%= session.uid %></strong>
 
             <span style="float: right">
                 <%= session.timestamp.toISOString().replace("T"," ").substring(0, 19); %>
@@ -34,7 +34,7 @@ Muted until: <strong><%= account.muted_until.toISOString().replace("T"," ").subs
     <% for (const chat of chats) { %>
         <div style="text-align: left">
             <strong><%= toDisplayCoord(chat.coord) %></strong>,
-            World: <strong><%= chat.world %></strong>
+            World: <strong><%= chat.world - 9 %></strong>
 
             <span style="float: right">
                 <%= chat.timestamp.toISOString().replace("T"," ").substring(0, 19); %>
