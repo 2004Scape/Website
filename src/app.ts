@@ -33,7 +33,7 @@ fastify.register(View, {
 
 fastify.register(Cookie);
 fastify.register(Session, {
-    secret: 'qxG38pWSAW5u6XS5pJS7jrSqwxbFgQdH',
+    secret: Environment.SESSION_SECRET,
     cookie: {
         secure: false
     }

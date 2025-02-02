@@ -1,0 +1,93 @@
+<%- include('../_partial/header.ejs', { title: 'Mod Overview' }); %>
+<%- include('../_components/frame-top.ejs'); %>
+<%- include('../_components/content-start.ejs'); %>
+<%- include('../_components/title-box.ejs', { title: account.username + "'s Mod Overview" }); %>
+
+<%- include('../_components/content-body-start.ejs'); %>
+<% if (account.banned_until) { %>
+Banned until: <strong><%= account.banned_until.toISOString().replace("T"," ").substring(0, 19); %></strong><br>
+<% } %>
+
+<% if (account.muted_until) { %>
+Muted until: <strong><%= account.muted_until.toISOString().replace("T"," ").substring(0, 19); %></strong>
+<% } %>
+
+<h3>Sessions</h3>
+
+<div style="height: 500px; overflow-y: scroll">
+    <% for (const session of sessions) { %>
+        <div style="text-align: left">
+            World: <strong><%= session.world %></strong>, IP: <strong><%= session.ip %></strong>, UID: <strong><%= session.uid %></strong>
+
+            <span style="float: right">
+                <%= session.timestamp.toISOString().replace("T"," ").substring(0, 19); %>
+            </span>
+        </div>
+        <hr>
+    <% } %>
+</div>
+
+<hr>
+<h3>Public Chat Messages</h3>
+
+<div style="height: 500px; overflow-y: scroll">
+    <% for (const chat of chats) { %>
+        <div style="text-align: left">
+            <strong><%= toDisplayCoord(chat.coord) %></strong>,
+            World: <strong><%= chat.world %></strong>
+
+            <span style="float: right">
+                <%= chat.timestamp.toISOString().replace("T"," ").substring(0, 19); %>
+            </span>
+
+            <br>
+
+            <%= chat.message %>
+        </div>
+        <hr>
+    <% } %>
+</div>
+
+<hr>
+<h3>Private Chat Messages</h3>
+
+<div style="height: 500px; overflow-y: scroll">
+    <% for (const pm of pms) { %>
+        <div style="text-align: left">
+            <strong><a href="/mod/overview/<%= pm.username %>"><%= toDisplayName(pm.username) %></a></strong>
+
+            <span style="float: right">
+                <%= pm.timestamp.toISOString().replace("T"," ").substring(0, 19); %>
+            </span>
+
+            <br>
+
+            <%= pm.message %>
+        </div>
+        <hr>
+    <% } %>
+</div>
+
+<hr>
+<h3>Events</h3>
+
+<div style="height: 500px; overflow-y: scroll">
+    <% for (const log of logs) { %>
+        <div style="text-align: left">
+            <strong><%= toDisplayCoord(log.coord) %></strong>
+
+            <span style="float: right">
+                <%= log.timestamp.toISOString().replace("T"," ").substring(0, 19); %>
+            </span>
+
+            <br>
+
+            <%= log.event %>
+        </div>
+        <hr>
+    <% } %>
+</div>
+<%- include('../_components/content-body-end.ejs'); %>
+
+<%- include('../_components/content-end.ejs'); %>
+<%- include('../_partial/footer.ejs'); %>

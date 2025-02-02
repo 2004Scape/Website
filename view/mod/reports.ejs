@@ -1,0 +1,31 @@
+<%- include('../_partial/header.ejs', { title: 'Report Log' }); %>
+<%- include('../_components/frame-top.ejs'); %>
+<%- include('../_components/content-start.ejs'); %>
+<%- include('../_components/title-box.ejs', { title: "Report log" }); %>
+
+<%- include('../_components/content-body-start.ejs'); %>
+<h3>Reports</h3>
+
+<div style="height: 500px; overflow-y: scroll">
+    <% for (const report of reports) { %>
+        <div style="text-align: left">
+            <strong>
+                <%= toDisplayCoord(report.coord) %>,
+                World: <%= report.world %>
+            </strong>
+
+            <span style="float: right">
+                <%= report.timestamp.toISOString().replace("T"," ").substring(0, 19); %>
+            </span>
+
+            <br>
+
+            <a href="/mod/overview/<%= report.username %>"><%= toDisplayName(report.username) %></a> reported <a href="/mod/overview/<%= report.offender %>"><%= toDisplayName(report.offender) %></a>: <em><%= reasons[report.reason] %></em>
+        </div>
+        <hr>
+    <% } %>
+</div>
+<%- include('../_components/content-body-end.ejs'); %>
+
+<%- include('../_components/content-end.ejs'); %>
+<%- include('../_partial/footer.ejs'); %>

@@ -12,4 +12,6 @@ export default {
     DB_USER: tryParseString(process.env.DB_USER, ''),
     DB_PASS: tryParseString(process.env.DB_PASS, ''),
     DB_NAME: tryParseString(process.env.DB_NAME, ''),
+
+    SESSION_SECRET: tryParseString(process.env.SESSION_SECRET, 'qxG38pWSAW5u6XS5pJS7jrSqwxbFgQdH'),
 };
