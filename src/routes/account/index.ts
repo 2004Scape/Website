@@ -68,7 +68,8 @@ export default async function (app: FastifyInstance) {
 
         req.session.account = {
             id: account.id,
-            username: account.username
+            username: account.username,
+            staffmodlevel: account.staffmodlevel
         };
 
         return res.redirect('/account', 302);

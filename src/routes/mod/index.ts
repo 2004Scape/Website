@@ -33,7 +33,7 @@ const reasons = [
 export default async function (app: FastifyInstance) {
     app.get('/overview/:username',  async (req: any, res: any) => {
         try {
-            if (!req.session.account) {
+            if (!req.session.account || req.session.account.staffmodlevel < 1) {
                 return res.redirect('/account/login', 302);
             }
 
@@ -58,7 +58,7 @@ export default async function (app: FastifyInstance) {
 
     app.get('/reports',  async (req: any, res: any) => {
         try {
-            if (!req.session.account) {
+            if (!req.session.account || req.session.account.staffmodlevel < 1) {
                 return res.redirect('/account/login', 302);
             }
 
