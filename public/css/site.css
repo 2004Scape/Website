@@ -1,0 +1,12 @@
+.row {
+  display: flex;
+  justify-content: space-around;
+}
+
+.hidden {
+  display: none;
+}
+
+.pointer-cursor {
+  cursor: pointer;
+}

@@ -1,6 +1,6 @@
 import { FastifyInstance } from 'fastify';
 
-import { db } from '#/db/query.js';
+import { db, toDbDate } from '#/db/query.js';
 import { toDisplayName } from '#/jstring/JString.js';
 import LoggerEventType from '#/util/LoggerEventType.js';
 
@@ -136,5 +136,21 @@ export default async function (app: FastifyInstance) {
             console.error(err);
             res.redirect('/', 302);
         }
+    });
+
+    app.post('/ban/:id', async (req: any, res: any) => {
+        if (!req.session.account || req.session.account.staffmodlevel < 1) {
+            return res.status(401).send();
+        }
+
+        const { id } = req.params;
+        const { banned_until } = req.body;
+
+        await db.updateTable('account')
+            .set({ banned_until: toDbDate(banned_until) })
+            .where('id', '=', id)
+            .execute();
+        
+        return res.status(200).send();
     });
 }
