@@ -1,0 +1,17 @@
+<%
+  const btnId = typeof(id) === "string" ? id : undefined;
+  const btnWidth = typeof(width) === "number" ? width : 100;
+  const btnHeight = typeof(height) === "number" ? height : 45;
+  const isShinyButton = typeof(shiny) === "boolean" ? shiny : false;
+  
+  const cssClass = isShinyButton ? 'b2' : 'b';
+  const bgcolor = isShinyButton ? '#570700' : '#474747';
+  const bg = isShinyButton ? '/img/title/shinystonered.jpg' : '/img/stoneback.gif';
+%>
+<table width=<%- btnWidth %> height=<%- btnHeight %> bgcolor="black" cellpadding=2>
+  <tr>
+    <td class="pointer-cursor" <%- btnId ? `id=${btnId} ` : '' %>class=<%- cssClass %> bgcolor=<%- bgcolor %> background=<%- bg %>>
+      <center><%- text %></center>
+    </td>
+  </tr>
+</table>

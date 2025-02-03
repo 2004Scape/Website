@@ -1,0 +1,75 @@
+<script>
+  const banButton = document.getElementById('ban-btn'),
+        muteButton = document.getElementById('mute-btn'),
+        changeUsernameButton = document.getElementById('name-change-btn');
+
+  const banModal = document.getElementById('modal-ban-player');
+
+  const banModalUsername = document.querySelector('#modal-ban-player-username > span'),
+        banModalTimePeriodSelect = document.getElementById('modal-ban-player-time-select'),
+        banModalCustomTimePeriod = document.getElementById('modal-ban-player-time-custom');
+  const banModalBanButton = document.getElementById('modal-ban-player-btn'),
+        banModalMercyButton = document.getElementById('modal-cancel-ban-btn');
+
+  banModalUsername.textContent = accountUsername;
+
+  async function banUser() {
+    if (banModalTimePeriodSelect.value === -1) {
+      if (banModalCustomTimePeriod.value == "" || banModalCustomTimePeriod.value == null) {
+        alert('Please enter amount of days for custom ban time length');
+        return;
+      }
+    }
+
+    let numberOfDays = banModalTimePeriodSelect.value == -1 ? banModalCustomTimePeriod.value : banModalTimePeriodSelect.value;
+    let banDate = new Date();
+    console.log(`Adding ${numberOfDays} to ${banDate.toISOString()}`);
+    banDate.setUTCDate(banDate.getUTCDate() + numberOfDays);
+    console.log(`Added ${numberOfDays} (${banDate.toISOString()})`);
+
+    if (confirm(`Are you sure you want to ban ${accountUsername} for ${numberOfDays} day(s)?`)) {
+      fetch(`/mod/ban/${accountUserId}`, {
+        method: 'POST',
+        body: JSON.stringify({
+          banned_until: banDate.toISOString()
+        }),
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      }).then(res => {
+        if (res.status == 200) {
+          banModal.close();
+          alert(`Successfully banned ${accountUsername} for ${numberOfDays} day(s).`);
+          window.location.reload();
+        } else {
+          alert('Something went wrong. Please signout and back in, then try again.');
+        }
+      });
+    }
+  }
+
+  // TEMPORARY
+  function nyi() {
+    alert('Not yet implemented! Please try again on another date.');
+  }
+  muteButton.addEventListener('click', nyi);
+  changeUsernameButton.addEventListener('click', nyi);
+
+  banButton.addEventListener('click', (event) => {
+    banModal.showModal();
+  });
+  banModalMercyButton.addEventListener('click', (event) => {
+    banModal.close();
+  });
+  banModalBanButton.addEventListener('click', banUser);
+
+  banModalTimePeriodSelect.addEventListener('change', (event) => {
+    const newValue = event.target.value;
+    if (newValue == -1) {
+      banModalCustomTimePeriod.classList.remove('hidden');
+    } else {
+      banModalCustomTimePeriod.classList.add('hidden');
+    }
+  });
+  
+</script>
