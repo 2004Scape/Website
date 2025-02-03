@@ -122,7 +122,7 @@ Muted until: <strong><%= account.muted_until.toISOString().replace("T"," ").subs
 <%- include('../_partial/footer.ejs'); %>
 
 <script>
-  const accountUsername = "<%- account.username %>";
-  const accountUserId = <%- account.id %>;
+  <% const { password, ...sanitizedAccount } = account %>
+  const account = JSON.parse(`<%- JSON.stringify(sanitizedAccount) %>`);
 </script>
 <%- include('../_scripts/mod/overview.ejs'); %>

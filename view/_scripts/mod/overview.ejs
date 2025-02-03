@@ -11,7 +11,19 @@
   const banModalBanButton = document.getElementById('modal-ban-player-btn'),
         banModalMercyButton = document.getElementById('modal-cancel-ban-btn');
 
-  banModalUsername.textContent = accountUsername;
+  function addDaysToCurrentDate(days) {
+    const currentDate = new Date();
+    
+    // Get the current timestamp, and add days converted to milliseconds because .setDate()/.getDate()
+    // give wildly inaccurate results for some reason
+    const futureTime = currentDate.getTime() + (days * 24 * 60 * 60 * 1000);
+    return new Date(futureTime);
+  }
+
+  function resetBanModalInputs() {
+    banModalTimePeriodSelect.value = 1;
+    banModalCustomTimePeriod.value = "";
+  }
 
   async function banUser() {
     if (banModalTimePeriodSelect.value === -1) {
@@ -22,13 +34,10 @@
     }
 
     let numberOfDays = banModalTimePeriodSelect.value == -1 ? banModalCustomTimePeriod.value : banModalTimePeriodSelect.value;
-    let banDate = new Date();
-    console.log(`Adding ${numberOfDays} to ${banDate.toISOString()}`);
-    banDate.setUTCDate(banDate.getUTCDate() + numberOfDays);
-    console.log(`Added ${numberOfDays} (${banDate.toISOString()})`);
+    let banDate = addDaysToCurrentDate(numberOfDays);
 
-    if (confirm(`Are you sure you want to ban ${accountUsername} for ${numberOfDays} day(s)?`)) {
-      fetch(`/mod/ban/${accountUserId}`, {
+    if (confirm(`Are you sure you want to ban ${account.username} for ${numberOfDays} day(s)?`)) {
+      fetch(`/mod/ban/${account.id}`, {
         method: 'POST',
         body: JSON.stringify({
           banned_until: banDate.toISOString()
@@ -39,7 +48,7 @@
       }).then(res => {
         if (res.status == 200) {
           banModal.close();
-          alert(`Successfully banned ${accountUsername} for ${numberOfDays} day(s).`);
+          alert(`Successfully banned ${account.username} for ${numberOfDays} day(s).`);
           window.location.reload();
         } else {
           alert('Something went wrong. Please signout and back in, then try again.');
@@ -48,14 +57,24 @@
     }
   }
 
-  // TEMPORARY
-  function nyi() {
+  async function muteUser() {
     alert('Not yet implemented! Please try again on another date.');
   }
-  muteButton.addEventListener('click', nyi);
-  changeUsernameButton.addEventListener('click', nyi);
+
+  async function changeUsername() {
+
+  }
+
+  muteButton.addEventListener('click', muteUser);
+  changeUsernameButton.addEventListener('click', changeUsername);
 
   banButton.addEventListener('click', (event) => {
+    if (account.banned_until) {
+      alert(`${account.username} is already banned!`);
+      return;
+    }
+    
+    banModalTimePeriodSelect.value = 1;
     banModal.showModal();
   });
   banModalMercyButton.addEventListener('click', (event) => {
@@ -71,5 +90,7 @@
       banModalCustomTimePeriod.classList.add('hidden');
     }
   });
-  
+
+  banModalUsername.textContent = account.username;
+  resetBanModalInputs();
 </script>
