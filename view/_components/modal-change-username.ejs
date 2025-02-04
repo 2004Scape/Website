@@ -1,0 +1,20 @@
+<dialog id="modal-change-username" class="modal focused-modal">
+  <div>
+    <h2>Change Username</h2>
+  </div>
+  <form method="post" autocomplete="off">
+    <h3>Please choose <span id="modal-change-username-span" style="color:maroon">$USERNAME</span>'s new username:</h3>
+    <div class="modal-ban-player-time-container">
+      <!-- This input is to prevent FF from auto filling username because it ignores autocomplete="off"-->
+      <input type="text" style="display:none">
+      <input type="text" id="modal-change-username-input" placeholder="New username">
+    </div>
+    <div class="row">
+      <%- include('stones-button.ejs', { id: 'modal-cancel-change-username-btn', text: 'Cancel' }); %>
+      <span style="width:1rem"></span>
+      <%- include('stones-button.ejs', { id: 'modal-confirm-change-username-btn', text: 'Rename', shiny: true }); %>
+      <span style="width:1rem"></span>
+      <%- include('stones-button.ejs', { id: 'modal-confirm-change-unban-username-btn', text: 'Rename &amp;<br>Unban', shiny: true }); %>
+    </div>
+  </form>
+</dialog>

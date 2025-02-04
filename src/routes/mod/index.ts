@@ -1,8 +1,11 @@
+import fs from 'fs';
+
 import { FastifyInstance } from 'fastify';
 
 import { db, toDbDate } from '#/db/query.js';
-import { toDisplayName } from '#/jstring/JString.js';
+import { toDisplayName, toSafeName } from '#/jstring/JString.js';
 import LoggerEventType from '#/util/LoggerEventType.js';
+import { isUsernameExplicit, isUsernameValid } from '#/util/Username.js';
 
 function toDisplayCoord(coord: number) {
     const level = (coord >> 28) & 0x3;
@@ -34,11 +37,11 @@ const reasons = [
 export default async function (app: FastifyInstance) {
     app.get('/overview/:username',  async (req: any, res: any) => {
         try {
-            if (!req.session.account || req.session.account.staffmodlevel < 1) {
-                return res.redirect('/account/login', 302);
-            }
-
             const { username } = req.params;
+
+            if (!req.session.account || req.session.account.staffmodlevel < 1) {
+                return res.redirect(`/account/login?redirectUrl=/mod/overview/${username}`, 302);
+            }
     
             const account = await db.selectFrom('account').where('username', '=', username).selectAll().executeTakeFirst();
 
@@ -73,7 +76,7 @@ export default async function (app: FastifyInstance) {
     app.get('/reports',  async (req: any, res: any) => {
         try {
             if (!req.session.account || req.session.account.staffmodlevel < 1) {
-                return res.redirect('/account/login', 302);
+                return res.redirect('/account/login?redirectUrl=/mod/reports', 302);
             }
 
             return res.view('mod/reports', {
@@ -92,11 +95,11 @@ export default async function (app: FastifyInstance) {
 
     app.get('/uid/:uid',  async (req: any, res: any) => {
         try {
-            if (!req.session.account || req.session.account.staffmodlevel < 1) {
-                return res.redirect('/account/login', 302);
-            }
-
             const { uid } = req.params;
+
+            if (!req.session.account || req.session.account.staffmodlevel < 1) {
+                return res.redirect(`/account/login?redirectUrl=/mod/uid/${uid}`, 302);
+            }
 
             const sessions = await db.selectFrom('session').select('uid')
                 .where('uid', '=', uid)
@@ -116,11 +119,11 @@ export default async function (app: FastifyInstance) {
 
     app.get('/ip/:ip',  async (req: any, res: any) => {
         try {
-            if (!req.session.account || req.session.account.staffmodlevel < 1) {
-                return res.redirect('/account/login', 302);
-            }
-
             const { ip } = req.params;
+
+            if (!req.session.account || req.session.account.staffmodlevel < 1) {
+                return res.redirect(`/account/login?redirectUrl=/mod/ip/${ip}`, 302);
+            }
 
             const sessions = await db.selectFrom('session').select('ip')
                 .where('ip', '=', ip)
@@ -146,11 +149,83 @@ export default async function (app: FastifyInstance) {
         const { id } = req.params;
         const { banned_until } = req.body;
 
+        if (!banned_until) {
+            return res.status(400).send({ error: `Missing 'banned_until' in body` });
+        }
+
         await db.updateTable('account')
             .set({ banned_until: toDbDate(banned_until) })
             .where('id', '=', id)
             .execute();
         
         return res.status(200).send();
+    });
+
+    app.post('/change-name/:id', async (req: any, res: any) => {
+        if (!req.session.account || req.session.account.staffmodlevel < 1) {
+            return res.status(401).send({ error: 'Unauthorized' });
+        }
+
+        const { id } = req.params;
+        const { new_username, unban } = req.body;
+
+        if (!new_username) {
+            return res.status(400).send({ error: `Missing 'new_username' in body` });
+        }
+
+        const nameCheck = isUsernameValid(new_username);
+        if (!nameCheck.success) {
+            return res.status(400).send({ error: nameCheck.message });
+        }
+
+        const profanityCheck = isUsernameExplicit(new_username);
+        if (!profanityCheck.success) {
+            return res.status(400).send({ error: nameCheck.message });
+        }
+
+        const account = await db.selectFrom('account')
+            .where('id', '=', id)
+            .selectAll()
+            .executeTakeFirst();
+        
+        if (!account) {
+            return res.status(400).send({ error: `User with '${id}' does not exist.`});
+        }
+
+        const safeNewName = toSafeName(new_username);
+        const existingAccount = await db.selectFrom('account')
+            .where('username', '=', safeNewName)
+            .selectAll()
+            .executeTakeFirst();
+        
+        if (existingAccount) {
+            return res.status(400).send({ error: `User with ${new_username} already exists - please select a new name.`});
+        }
+        
+        if (!fs.existsSync(`data/players/${id}/${account.username}.sav`)) {
+            return res.status(400).send({ error: `Unable to find user ${account.username}'s save file. Please report this issue.`});
+        }
+
+        let updatePlayerModel: any = { username: safeNewName };
+        if (unban === true) {
+            updatePlayerModel.banned_until = null;
+        }
+
+        await db.updateTable('account')
+            .set(updatePlayerModel)
+            .where('id', '=', id)
+            .execute();
+        
+        await db.insertInto('account')
+            .values({
+                username: account.username,
+                password: '(Set from mod web tools)'
+            })
+            .execute();
+        
+        fs.copyFileSync(`data/players/${id}/${account.username}.sav`, `data/players/${id}/${safeNewName}.sav`);
+        fs.unlinkSync(`data/players/${id}/${account.username}.sav`);
+
+        return res.status(200).send({ success: true });
     });
 }
