@@ -3,13 +3,19 @@
         muteButton = document.getElementById('mute-btn'),
         changeUsernameButton = document.getElementById('name-change-btn');
 
-  const banModal = document.getElementById('modal-ban-player');
-
-  const banModalUsername = document.getElementById('modal-ban-player-username'),
+  const banModal = document.getElementById('modal-ban-player'),
+        banModalUsername = document.getElementById('modal-ban-player-username'),
         banModalTimePeriodSelect = document.getElementById('modal-ban-player-time-select'),
-        banModalCustomTimePeriod = document.getElementById('modal-ban-player-time-custom');
-  const banModalBanButton = document.getElementById('modal-ban-player-btn'),
+        banModalCustomTimePeriod = document.getElementById('modal-ban-player-time-custom'),
+        banModalBanButton = document.getElementById('modal-ban-player-btn'),
         banModalMercyButton = document.getElementById('modal-cancel-ban-btn');
+  
+  const changeUsernameModal = document.getElementById('modal-change-username'),
+        changeUsernameConfirmButton = document.getElementById('modal-confirm-change-username-btn'),
+        changeUsernameUnbanConfirmButton = document.getElementById('modal-confirm-change-unban-username-btn'),
+        changeUsernameCancelButton = document.getElementById('modal-cancel-change-username-btn'),
+        changeUsernameTitle = document.getElementById('modal-change-username-span'),
+        changeUsernameInput = document.getElementById('modal-change-username-input');
 
   function addDaysToCurrentDate(days) {
     const currentDate = new Date();
@@ -20,12 +26,13 @@
     return new Date(futureTime);
   }
 
-  function resetBanModalInputs() {
+  function resetModalInputs() {
     banModalTimePeriodSelect.value = 1;
     banModalCustomTimePeriod.value = "";
+    changeUsernameInput.value = "";
   }
 
-  async function banUser() {
+  async function submitBanUserRequest() {
     if (banModalTimePeriodSelect.value === -1) {
       if (banModalCustomTimePeriod.value == "" || banModalCustomTimePeriod.value == null) {
         alert('Please enter amount of days for custom ban time length');
@@ -53,6 +60,9 @@
         } else {
           alert('Something went wrong. Please signout and back in, then try again.');
         }
+      }).catch(err => {
+        alert(`An unknown error occurred. Please report this issue.\n\n${err}`);
+        console.log(err);
       });
     }
   }
@@ -61,12 +71,46 @@
     alert('Not yet implemented! Please try again on another date.');
   }
 
-  async function changeUsername() {
-    alert('Not yet implemented! Please try again on another date.');
+  async function submitChangeUsernameRequest(unban = false) {
+    const newUsername = changeUsernameInput.value;
+    if (newUsername === "") {
+      alert('Please enter new username before submitting!');
+      return;
+    }
+
+    if (confirm(`Are you sure you want rename ${unban ? 'and unban' : ''} ${account.username} to '${newUsername}?'`)) {
+      let body = {
+        new_username: newUsername
+      };
+
+      if (unban) {
+        body.unban = true;
+      }
+
+      fetch(`/mod/change-name/${account.id}`, {
+        method: 'POST',
+        body: JSON.stringify(body),
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
+      .then(res => res.json())
+      .then(json => {
+        if (json.error) {
+          alert(json.error);
+        } else {
+          changeUsernameModal.close();
+          alert(`Successfully unbanned and changed ${account.username}'s username to '${newUsername}'.`);
+          location.href = `/mod/overview/${newUsername}`
+        }
+      }).catch(err => {
+        alert(`An unknown error occurred. Please report this issue.\n\n${err}`);
+        console.log(err);
+      });
+    }
   }
 
   muteButton.addEventListener('click', muteUser);
-  changeUsernameButton.addEventListener('click', changeUsername);
 
   banButton.addEventListener('click', (event) => {
     if (account.banned_until) {
@@ -74,14 +118,13 @@
       return;
     }
 
-    banModalTimePeriodSelect.value = 1;
+    resetModalInputs();
     banModal.showModal();
   });
   banModalMercyButton.addEventListener('click', (event) => {
     banModal.close();
   });
-  banModalBanButton.addEventListener('click', banUser);
-
+  banModalBanButton.addEventListener('click', submitBanUserRequest);
   banModalTimePeriodSelect.addEventListener('change', (event) => {
     const newValue = event.target.value;
     if (newValue == -1) {
@@ -91,6 +134,21 @@
     }
   });
 
+  changeUsernameButton.addEventListener('click', (event) => {
+    resetModalInputs();
+    changeUsernameModal.showModal();
+  });
+  changeUsernameConfirmButton.addEventListener('click', (event) => {
+    submitChangeUsernameRequest();
+  });
+  changeUsernameUnbanConfirmButton.addEventListener('click', (event) => {
+    submitChangeUsernameRequest(true);
+  });
+  changeUsernameCancelButton.addEventListener('click', (event) => {
+    changeUsernameModal.close();
+  });
+
   banModalUsername.textContent = account.username;
-  resetBanModalInputs();
+  changeUsernameTitle.textContent = account.username;
+  resetModalInputs();
 </script>

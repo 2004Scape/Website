@@ -5,7 +5,8 @@
 
 <%- include('../_components/content-body-start.ejs'); %>
 
-<%- include('../_components/modal-ban-player.ejs', { username: account.username }); %>
+<%- include('../_components/modal-ban-player.ejs'); %>
+<%- include('../_components/modal-change-username.ejs'); %>
 
 <% if (account.banned_until) { %>
 Banned until: <strong><%= account.banned_until.toISOString().replace("T"," ").substring(0, 19); %></strong><br>

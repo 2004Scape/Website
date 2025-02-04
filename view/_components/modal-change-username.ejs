@@ -2,23 +2,19 @@
   <div>
     <h2>Change Username</h2>
   </div>
-  <form method="post">
-    <h3 id="modal-ban-player-username">Please choose <span style="color:maroon">$USERNAME</span>'s new username:</h3>
+  <form method="post" autocomplete="off">
+    <h3>Please choose <span id="modal-change-username-span" style="color:maroon">$USERNAME</span>'s new username:</h3>
     <div class="modal-ban-player-time-container">
-      <select id="modal-ban-player-time-select" value="1">
-        <option value="1">1 Day</option>
-        <option value="3">3 Days</option>
-        <option value="7">7 Days</option>
-        <option value="14">14 Days</option>
-        <option value="-1">Custom...</option>
-      </select>
-      <br>
-      <input class="hidden" id="modal-ban-player-time-custom" type="number" placeholder="# of days...">
+      <!-- This input is to prevent FF from auto filling username because it ignores autocomplete="off"-->
+      <input type="text" style="display:none">
+      <input type="text" id="modal-change-username-input" placeholder="New username">
     </div>
     <div class="row">
-      <%- include('stones-button.ejs', { id: 'modal-cancel-ban-btn', text: 'Mercy' }); %>
+      <%- include('stones-button.ejs', { id: 'modal-cancel-change-username-btn', text: 'Cancel' }); %>
       <span style="width:1rem"></span>
-      <%- include('stones-button.ejs', { id: 'modal-ban-player-btn', text: 'Ban', shiny: true }); %>
+      <%- include('stones-button.ejs', { id: 'modal-confirm-change-username-btn', text: 'Rename', shiny: true }); %>
+      <span style="width:1rem"></span>
+      <%- include('stones-button.ejs', { id: 'modal-confirm-change-unban-username-btn', text: 'Rename &amp;<br>Unban', shiny: true }); %>
     </div>
   </form>
 </dialog>
