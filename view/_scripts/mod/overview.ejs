@@ -35,7 +35,7 @@
   async function submitBanUserRequest() {
     if (banModalTimePeriodSelect.value === -1) {
       if (banModalCustomTimePeriod.value == "" || banModalCustomTimePeriod.value == null) {
-        alert('Please enter amount of days for custom ban time length');
+        alert('Please enter a new period of time:');
         return;
       }
     }
@@ -43,7 +43,7 @@
     let numberOfDays = banModalTimePeriodSelect.value == -1 ? banModalCustomTimePeriod.value : banModalTimePeriodSelect.value;
     let banDate = addDaysToCurrentDate(numberOfDays);
 
-    if (confirm(`Are you sure you want to ban ${account.username} for ${numberOfDays} day(s)?`)) {
+    if (confirm(`Are you SURE you want to ban ${account.username} for ${numberOfDays} day(s)?`)) {
       fetch(`/mod/ban/${account.id}`, {
         method: 'POST',
         body: JSON.stringify({
@@ -55,7 +55,7 @@
       }).then(res => {
         if (res.status == 200) {
           banModal.close();
-          alert(`Successfully banned ${account.username} for ${numberOfDays} day(s).`);
+          alert(`Banned ${account.username} for ${numberOfDays} day(s).`);
           window.location.reload();
         } else {
           alert('Something went wrong. Please signout and back in, then try again.');
@@ -113,11 +113,6 @@
   muteButton.addEventListener('click', muteUser);
 
   banButton.addEventListener('click', (event) => {
-    if (account.banned_until) {
-      alert(`${account.username} is already banned!`);
-      return;
-    }
-
     resetModalInputs();
     banModal.showModal();
   });

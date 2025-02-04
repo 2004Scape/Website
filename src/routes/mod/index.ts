@@ -35,14 +35,14 @@ const reasons = [
 ];
 
 export default async function (app: FastifyInstance) {
-    app.get('/overview/:username',  async (req: any, res: any) => {
+    app.get('/overview/:username', async (req: any, res: any) => {
         try {
             const { username } = req.params;
 
             if (!req.session.account || req.session.account.staffmodlevel < 1) {
                 return res.redirect(`/account/login?redirectUrl=/mod/overview/${username}`, 302);
             }
-    
+
             const account = await db.selectFrom('account').where('username', '=', username).selectAll().executeTakeFirst();
 
             if (!account) {
@@ -73,7 +73,7 @@ export default async function (app: FastifyInstance) {
         }
     });
 
-    app.get('/reports',  async (req: any, res: any) => {
+    app.get('/reports', async (req: any, res: any) => {
         try {
             if (!req.session.account || req.session.account.staffmodlevel < 1) {
                 return res.redirect('/account/login?redirectUrl=/mod/reports', 302);
@@ -93,7 +93,7 @@ export default async function (app: FastifyInstance) {
         }
     });
 
-    app.get('/uid/:uid',  async (req: any, res: any) => {
+    app.get('/uid/:uid', async (req: any, res: any) => {
         try {
             const { uid } = req.params;
 
@@ -117,7 +117,7 @@ export default async function (app: FastifyInstance) {
         }
     });
 
-    app.get('/ip/:ip',  async (req: any, res: any) => {
+    app.get('/ip/:ip', async (req: any, res: any) => {
         try {
             const { ip } = req.params;
 
@@ -154,16 +154,16 @@ export default async function (app: FastifyInstance) {
         }
 
         await db.updateTable('account')
-            .set({ banned_until: toDbDate(banned_until) })
+            .set({ banned_until: banned_until > 0 ? toDbDate(banned_until) : null })
             .where('id', '=', id)
             .execute();
-        
+
         return res.status(200).send();
     });
 
     app.post('/change-name/:id', async (req: any, res: any) => {
         if (!req.session.account || req.session.account.staffmodlevel < 1) {
-            return res.status(401).send({ error: 'Unauthorized' });
+            return res.status(401).send({ error: 'Unauthorized (refresh page?)' });
         }
 
         const { id } = req.params;
@@ -187,9 +187,9 @@ export default async function (app: FastifyInstance) {
             .where('id', '=', id)
             .selectAll()
             .executeTakeFirst();
-        
+
         if (!account) {
-            return res.status(400).send({ error: `User with '${id}' does not exist.`});
+            return res.status(400).send({ error: `User with '${id}' does not exist.` });
         }
 
         const safeNewName = toSafeName(new_username);
@@ -197,13 +197,9 @@ export default async function (app: FastifyInstance) {
             .where('username', '=', safeNewName)
             .selectAll()
             .executeTakeFirst();
-        
+
         if (existingAccount) {
-            return res.status(400).send({ error: `User with ${new_username} already exists - please select a new name.`});
-        }
-        
-        if (!fs.existsSync(`data/players/${id}/${account.username}.sav`)) {
-            return res.status(400).send({ error: `Unable to find user ${account.username}'s save file. Please report this issue.`});
+            return res.status(400).send({ error: `User with ${new_username} already exists - please select a new name.` });
         }
 
         let updatePlayerModel: any = { username: safeNewName };
@@ -215,16 +211,18 @@ export default async function (app: FastifyInstance) {
             .set(updatePlayerModel)
             .where('id', '=', id)
             .execute();
-        
+
         await db.insertInto('account')
             .values({
                 username: account.username,
-                password: '(Set from mod web tools)'
+                password: 'blocked'
             })
             .execute();
-        
-        fs.copyFileSync(`data/players/${id}/${account.username}.sav`, `data/players/${id}/${safeNewName}.sav`);
-        fs.unlinkSync(`data/players/${id}/${account.username}.sav`);
+
+        // todo: profiles
+        if (fs.existsSync(`data/players/beta/${account.username}.sav`)) {
+            fs.renameSync(`data/players/beta/${account.username}.sav`, `data/players/beta/${safeNewName}.sav`);
+        }
 
         return res.status(200).send({ success: true });
     });

@@ -58,7 +58,7 @@ export function isUsernameExplicit(username: string): UsernameCheckResult {
         if (name.endsWith(suffix)) passPrefixSuffixTest = false;
     });
 
-    if (blockedUsernames.hasMatch(username) || staticBlockedUsernames.includes(username) || !passPrefixSuffixTest) {
+    if (blockedUsernames.hasMatch(displayName) || staticBlockedUsernames.includes(displayName) || !passPrefixSuffixTest) {
         return {
             success: false,
             message: 'That username is not available.'
