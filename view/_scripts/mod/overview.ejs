@@ -78,7 +78,7 @@
       return;
     }
 
-    if (confirm(`Are you sure you want rename ${unban ? 'and unban' : ''} ${account.username} to '${newUsername}?'`)) {
+    if (confirm(`Are you sure you want to ${unban ? 'unban and ' : ''}rename ${account.username} to '${newUsername}?'`)) {
       let body = {
         new_username: newUsername
       };
