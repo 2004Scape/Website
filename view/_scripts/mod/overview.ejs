@@ -5,7 +5,7 @@
 
   const banModal = document.getElementById('modal-ban-player');
 
-  const banModalUsername = document.querySelector('#modal-ban-player-username > span'),
+  const banModalUsername = document.getElementById('modal-ban-player-username'),
         banModalTimePeriodSelect = document.getElementById('modal-ban-player-time-select'),
         banModalCustomTimePeriod = document.getElementById('modal-ban-player-time-custom');
   const banModalBanButton = document.getElementById('modal-ban-player-btn'),
@@ -62,7 +62,7 @@
   }
 
   async function changeUsername() {
-
+    alert('Not yet implemented! Please try again on another date.');
   }
 
   muteButton.addEventListener('click', muteUser);
@@ -73,7 +73,7 @@
       alert(`${account.username} is already banned!`);
       return;
     }
-    
+
     banModalTimePeriodSelect.value = 1;
     banModal.showModal();
   });

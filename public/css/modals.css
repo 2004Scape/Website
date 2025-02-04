@@ -1,34 +1,31 @@
-.focused-dialog::backdrop {
-  background-color: rgba(0, 0, 0, .75);
-}
-
-#modal-ban-player {
+.modal {
   padding: 0;
   background-color: ivory;
 }
-#modal-ban-player > div {
-  background-color: brown; /* "brown" */
+.modal > div {
+  background-color: brown;
 }
-#modal-ban-player > div > h2 {
+.modal > div > h2 {
   font-size: 1.25rem;
   color: white;
   margin: 0;
   padding: 0.5rem;
 }
-#modal-ban-player > form {
+.modal > form {
   padding: 1rem;
   margin: 0;
 }
-#modal-ban-player > form > h3 {
+.modal > form > h3 {
   margin-top: 0;
 }
+
+.focused-modal::backdrop {
+  background-color: rgba(0, 0, 0, .75);
+}
+
 #modal-ban-player .modal-ban-player-time-container > br {
   margin-bottom: 1rem;
 }
 #modal-ban-player > form > div:not(:last-child) {
   margin-bottom: 1rem;
-}
-#modal-ban-player #modal-cancel-ban-btn,
-#modal-ban-player #modal-ban-player-btn {
-  cursor: pointer;
 }
