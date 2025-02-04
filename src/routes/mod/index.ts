@@ -34,11 +34,11 @@ const reasons = [
 export default async function (app: FastifyInstance) {
     app.get('/overview/:username',  async (req: any, res: any) => {
         try {
-            if (!req.session.account || req.session.account.staffmodlevel < 1) {
-                return res.redirect('/account/login', 302);
-            }
-
             const { username } = req.params;
+
+            if (!req.session.account || req.session.account.staffmodlevel < 1) {
+                return res.redirect(`/account/login?redirectUrl=/mod/overview/${username}`, 302);
+            }
     
             const account = await db.selectFrom('account').where('username', '=', username).selectAll().executeTakeFirst();
 
@@ -73,7 +73,7 @@ export default async function (app: FastifyInstance) {
     app.get('/reports',  async (req: any, res: any) => {
         try {
             if (!req.session.account || req.session.account.staffmodlevel < 1) {
-                return res.redirect('/account/login', 302);
+                return res.redirect('/account/login?redirectUrl=/mod/reports', 302);
             }
 
             return res.view('mod/reports', {
@@ -92,11 +92,11 @@ export default async function (app: FastifyInstance) {
 
     app.get('/uid/:uid',  async (req: any, res: any) => {
         try {
-            if (!req.session.account || req.session.account.staffmodlevel < 1) {
-                return res.redirect('/account/login', 302);
-            }
-
             const { uid } = req.params;
+
+            if (!req.session.account || req.session.account.staffmodlevel < 1) {
+                return res.redirect(`/account/login?redirectUrl=/mod/uid/${uid}`, 302);
+            }
 
             const sessions = await db.selectFrom('session').select('uid')
                 .where('uid', '=', uid)
@@ -116,11 +116,11 @@ export default async function (app: FastifyInstance) {
 
     app.get('/ip/:ip',  async (req: any, res: any) => {
         try {
-            if (!req.session.account || req.session.account.staffmodlevel < 1) {
-                return res.redirect('/account/login', 302);
-            }
-
             const { ip } = req.params;
+
+            if (!req.session.account || req.session.account.staffmodlevel < 1) {
+                return res.redirect(`/account/login?redirectUrl=/mod/ip/${ip}`, 302);
+            }
 
             const sessions = await db.selectFrom('session').select('ip')
                 .where('ip', '=', ip)

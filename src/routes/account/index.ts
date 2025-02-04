@@ -72,6 +72,11 @@ export default async function (app: FastifyInstance) {
             staffmodlevel: account.staffmodlevel
         };
 
+        const redirect_uri = req.query.redirectUrl;
+        if (redirect_uri) {
+            return res.redirect(redirect_uri);
+        }
+
         return res.redirect('/account', 302);
     });
 
