@@ -1,13 +1,9 @@
 import bcrypt from 'bcrypt';
-import {
-	RegExpMatcher,
-	englishDataset,
-	englishRecommendedTransformers,
-} from 'obscenity';
 
 import { db } from '#/db/query.js';
 
 import { toDisplayName, toSafeName } from '#/jstring/JString.js';
+import { isUsernameExplicit, isUsernameValid } from '#/util/Username.js';
 
 enum CreateStep {
     USERNAME,
@@ -15,26 +11,6 @@ enum CreateStep {
     PASSWORD,
     FINISH
 }
-
-const staticBlockedUsernames = [
-    // thank you all:
-    'Andrew',
-    'Paul',
-    'Ian',
-    'Ash', // always just "mod ash" but put some respect on em!
-    // and every other mod that contributed to the success and longevity of the game
-
-    // extras that players want to abuse and will surely circumvent :(
-    'Admin',
-    'Administrator',
-    'Mod',
-    'Moderator'
-];
-
-const blockedUsernames = new RegExpMatcher({
-    ...englishDataset.build(),
-    ...englishRecommendedTransformers,
-});
 
 export default function (f: any, opts: any, next: any) {
     f.get('/', async (req: any, res: any) => {
@@ -96,21 +72,23 @@ export default function (f: any, opts: any, next: any) {
 
         const { createStep } = req.session;
         const { username, password, password2, terms } = req.body;
-        if (typeof username !== 'undefined') {
-            const name = toSafeName(username);
+        const name = toSafeName(username);
 
-            if (name === 'invalid_name' || name.length < 1 || name.length > 12) {
+        if (typeof username !== 'undefined') {
+            const nameCheck = isUsernameValid(username);
+
+            if (!nameCheck.success) {
                 req.session.createStep = CreateStep.USERNAME;
-                req.session.createError = 'You must enter a valid username.';
+                req.session.createError = nameCheck.message;
                 delete req.session.createUsername;
                 return res.redirect('/create', 302);
             }
 
             const displayName = toDisplayName(username);
-            const blocked = blockedUsernames.hasMatch(displayName) || staticBlockedUsernames.includes(displayName);
-            if (blocked || name.startsWith(' ') || name.endsWith(' ') || name.startsWith('mod_') || name.startsWith('m0d_')) {
+            const displayNameCheck = isUsernameExplicit(displayName);
+            if (!displayNameCheck.success) {
                 req.session.createStep = CreateStep.USERNAME;
-                req.session.createError = 'That username is not available.';
+                req.session.createError = displayNameCheck.message;
                 delete req.session.createUsername;
                 return res.redirect('/create', 302);
             }
@@ -155,13 +133,10 @@ export default function (f: any, opts: any, next: any) {
                 return res.redirect('/create', 302);
             }
 
-            const name = toSafeName(username);
-
-            const displayName = toDisplayName(username);
-            const blocked = blockedUsernames.hasMatch(displayName) || staticBlockedUsernames.includes(displayName);
-            if (blocked || name.startsWith(' ') || name.endsWith(' ') || name.startsWith('mod_') || name.startsWith('m0d_')) {
+            const displayNameCheck = isUsernameExplicit(username);
+            if (!displayNameCheck.success) {
                 req.session.createStep = CreateStep.USERNAME;
-                req.session.createError = 'That username is not available.';
+                req.session.createError = displayNameCheck.message;
                 delete req.session.createUsername;
                 return res.redirect('/create', 302);
             }
