@@ -153,8 +153,11 @@ export default async function (app: FastifyInstance) {
             return res.status(400).send({ error: `Missing 'banned_until' in body` });
         }
 
+        const bannedDate = new Date(banned_until);
+        const isInvalidDate = isNaN(bannedDate.getTime()) || bannedDate.getTime() - (new Date()).getTime() < 0;
+
         await db.updateTable('account')
-            .set({ banned_until: banned_until > 0 ? toDbDate(banned_until) : null })
+            .set({ banned_until: isInvalidDate ? null : toDbDate(banned_until) })
             .where('id', '=', id)
             .execute();
 
