@@ -143,7 +143,7 @@ export default async function (app: FastifyInstance) {
 
     app.post('/ban/:id', async (req: any, res: any) => {
         if (!req.session.account || req.session.account.staffmodlevel < 1) {
-            return res.status(401).send();
+            return res.status(401).send({ error: 'Unauthorized' });
         }
 
         const { id } = req.params;
@@ -170,12 +170,12 @@ export default async function (app: FastifyInstance) {
             .where('id', '=', id)
             .execute();
 
-        return res.status(200).send();
+        return res.status(200).send({ success: true });
     });
 
     app.post('/unban/:id', async (req: any, res: any) => {
         if (!req.session.account || req.session.account.staffmodlevel < 1) {
-            return res.status(401).send();
+            return res.status(401).send({ error: 'Unauthorized' });
         }
 
         const { id } = req.params;
@@ -189,11 +189,11 @@ export default async function (app: FastifyInstance) {
         }
 
         await db.updateTable('account')
-            .set({ banned_until: null })
+            .set({ banned_until: null, logged_in: 0 })
             .where('id', '=', id)
             .execute();
         
-        return res.status(200).send();
+        return res.status(200).send({ success: true });
     });
 
     app.post('/mute/:id', async (req: any, res: any) => {
@@ -225,7 +225,7 @@ export default async function (app: FastifyInstance) {
             .where('id', '=', id)
             .execute();
 
-        return res.status(200).send();
+        return res.status(200).send({ success: true });
     });
 
     app.post('/unmute/:id', async (req: any, res: any) => {
@@ -244,11 +244,11 @@ export default async function (app: FastifyInstance) {
         }
 
         await db.updateTable('account')
-            .set({ muted_until: null })
+            .set({ muted_until: null, logged_in: 0 })
             .where('id', '=', id)
             .execute();
         
-        return res.status(200).send();
+        return res.status(200).send({ success: true });
     });
 
     app.post('/kick/:id', async (req: any, res: any) => {
@@ -271,12 +271,12 @@ export default async function (app: FastifyInstance) {
             .where('id', '=', id)
             .execute();
         
-        return res.status(200).send();
+        return res.status(200).send({ success: true });
     });
 
     app.post('/change-name/:id', async (req: any, res: any) => {
         if (!req.session.account || req.session.account.staffmodlevel < 1) {
-            return res.status(401).send({ error: 'Unauthorized (refresh page?)' });
+            return res.status(401).send({ error: 'Unauthorized' });
         }
 
         const { id } = req.params;
