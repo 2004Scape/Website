@@ -9,21 +9,23 @@
     <strong>Account name blocked by a moderator.</strong><br><br>
 <% } %>
 
-<%- include('../_components/modal-ban-player.ejs', { account }); %>
-<%- include('../_components/modal-change-username.ejs'); %>
+<%- include('../_components/modal-ban-player'); %>
+<%- include('../_components/modal-mute-player'); %>
+<%- include('../_components/modal-change-username'); %>
 
 <% if (account.banned_until) { %>
-Banned until: <strong><%= account.banned_until.toISOString().replace("T"," ").substring(0, 19); %></strong><br>
+Banned until: <strong id="banned-until-display"><%= account.banned_until.toISOString().replace("T"," ").substring(0, 19); %></strong><br>
 <% } %>
 
 <% if (account.muted_until) { %>
-Muted until: <strong><%= account.muted_until.toISOString().replace("T"," ").substring(0, 19); %></strong>
+Muted until: <strong id="muted-until-display"><%= account.muted_until.toISOString().replace("T"," ").substring(0, 19); %></strong>
 <% } %>
 
 <div style="display: flex; justify-content: space-around;">
-    <%- include('../_components/stones-button.ejs', { id: 'ban-btn', text: 'Ban', shiny: true, account }) %>
+    <%- include('../_components/stones-button.ejs', { id: 'ban-btn', text: account.banned_until ? 'Unban' : 'Ban', shiny: true, account }) %>
+    <%- include('../_components/stones-button.ejs', { id: 'mute-btn', text: account.muted_until ? 'Unmute' : 'Mute', shiny: true }) %>
     <%- include('../_components/stones-button.ejs', { id: 'name-change-btn', text: 'Change<br>Name' }); %>
-    <%- include('../_components/stones-button.ejs', { id: 'mute-btn', text: 'Mute' }) %>
+    <%- include('../_components/stones-button.ejs', { id: 'kick-btn', text: 'Kick' }); %>
 </div>
 
 <h3>Sessions</h3>

@@ -143,7 +143,7 @@ export default async function (app: FastifyInstance) {
 
     app.post('/ban/:id', async (req: any, res: any) => {
         if (!req.session.account || req.session.account.staffmodlevel < 1) {
-            return res.status(401).send();
+            return res.status(401).send({ error: 'Unauthorized' });
         }
 
         const { id } = req.params;
@@ -153,20 +153,130 @@ export default async function (app: FastifyInstance) {
             return res.status(400).send({ error: `Missing 'banned_until' in body` });
         }
 
+        const account = db.selectFrom('account')
+            .where('id', '=', id)
+            .selectAll()
+            .executeTakeFirst();
+        
+        if (!account) {
+            return res.status(400).send({ error: `Account with ID '${id}' does not exist` });
+        }
+
         const bannedDate = new Date(banned_until);
         const isInvalidDate = isNaN(bannedDate.getTime()) || bannedDate.getTime() - (new Date()).getTime() < 0;
 
         await db.updateTable('account')
-            .set({ banned_until: isInvalidDate ? null : toDbDate(banned_until) })
+            .set({ banned_until: isInvalidDate ? null : toDbDate(banned_until), logged_in: 0 })
             .where('id', '=', id)
             .execute();
 
-        return res.status(200).send();
+        return res.status(200).send({ success: true });
+    });
+
+    app.post('/unban/:id', async (req: any, res: any) => {
+        if (!req.session.account || req.session.account.staffmodlevel < 1) {
+            return res.status(401).send({ error: 'Unauthorized' });
+        }
+
+        const { id } = req.params;
+        const account = db.selectFrom('account')
+            .where('id', '=', id)
+            .selectAll()
+            .executeTakeFirst();
+        
+        if (!account) {
+            return res.status(400).send({ error: `Account with ID '${id}' does not exist` });
+        }
+
+        await db.updateTable('account')
+            .set({ banned_until: null, logged_in: 0 })
+            .where('id', '=', id)
+            .execute();
+        
+        return res.status(200).send({ success: true });
+    });
+
+    app.post('/mute/:id', async (req: any, res: any) => {
+        if (!req.session.account || req.session.account.staffmodlevel < 1) {
+            return res.status(401).send();
+        }
+
+        const { id } = req.params;
+        const { muted_until } = req.body;
+
+        if (!muted_until) {
+            return res.status(400).send({ error: `Missing 'muted_until' in body` });
+        }
+
+        const account = db.selectFrom('account')
+            .where('id', '=', id)
+            .selectAll()
+            .executeTakeFirst();
+        
+        if (!account) {
+            return res.status(400).send({ error: `Account with ID '${id}' does not exist` });
+        }
+
+        const mutedDate = new Date(muted_until);
+        const isInvalidDate = isNaN(mutedDate.getTime()) || mutedDate.getTime() - (new Date()).getTime() < 0;
+
+        await db.updateTable('account')
+            .set({ muted_until: isInvalidDate ? null : toDbDate(muted_until) })
+            .where('id', '=', id)
+            .execute();
+
+        return res.status(200).send({ success: true });
+    });
+
+    app.post('/unmute/:id', async (req: any, res: any) => {
+        if (!req.session.account || req.session.account.staffmodlevel < 1) {
+            return res.status(401).send();
+        }
+
+        const { id } = req.params;
+        const account = db.selectFrom('account')
+            .where('id', '=', id)
+            .selectAll()
+            .executeTakeFirst();
+        
+        if (!account) {
+            return res.status(400).send({ error: `Account with ID '${id}' does not exist` });
+        }
+
+        await db.updateTable('account')
+            .set({ muted_until: null, logged_in: 0 })
+            .where('id', '=', id)
+            .execute();
+        
+        return res.status(200).send({ success: true });
+    });
+
+    app.post('/kick/:id', async (req: any, res: any) => {
+        if (!req.session.account || req.session.account.staffmodlevel < 1) {
+            return res.status(401).send();
+        }
+
+        const { id } = req.params;
+        const account = db.selectFrom('account')
+            .where('id', '=', id)
+            .selectAll()
+            .executeTakeFirst();
+        
+        if (!account) {
+            return res.status(400).send({ error: `Account with ID '${id}' does not exist` });
+        }
+
+        await db.updateTable('account')
+            .set({ logged_in: 0 })
+            .where('id', '=', id)
+            .execute();
+        
+        return res.status(200).send({ success: true });
     });
 
     app.post('/change-name/:id', async (req: any, res: any) => {
         if (!req.session.account || req.session.account.staffmodlevel < 1) {
-            return res.status(401).send({ error: 'Unauthorized (refresh page?)' });
+            return res.status(401).send({ error: 'Unauthorized' });
         }
 
         const { id } = req.params;
@@ -208,6 +318,7 @@ export default async function (app: FastifyInstance) {
         let updatePlayerModel: any = { username: safeNewName };
         if (unban === true) {
             updatePlayerModel.banned_until = null;
+            updatePlayerModel.logged_in = 0;
         }
 
         await db.updateTable('account')

@@ -1,0 +1,25 @@
+<dialog id="modal-mute-player" class="modal focused-modal">
+  <div>
+    <h2>Are You Sure?</h2>
+  </div>
+  <form method="post">
+    <h3>Please select <span id="modal-mute-player-username" style="color:maroon">$USERNAME</span>'s mute length:</h3>
+    <div class="modal-mute-player-time-container">
+      <select id="modal-mute-player-time-select" value="1">
+        <option value="1">1 Day</option>
+        <option value="3">3 Days</option>
+        <option value="7">7 Days</option>
+        <option value="14">14 Days</option>
+        <option value="36500">Permanent</option>
+        <option value="-1">Custom...</option>
+      </select>
+      <br>
+      <input class="hidden" id="modal-mute-player-time-custom" type="number" placeholder="# of days...">
+    </div>
+    <div class="row">
+      <%- include('stones-button.ejs', { id: 'modal-cancel-mute-btn', text: 'Mercy' }); %>
+      <span style="width:1rem"></span>
+      <%- include('stones-button.ejs', { id: 'modal-mute-player-btn', text: 'Mute', shiny: true }); %>
+    </div>
+  </form>
+</dialog>

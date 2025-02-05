@@ -1,7 +1,8 @@
 <script>
   const banButton = document.getElementById('ban-btn'),
         muteButton = document.getElementById('mute-btn'),
-        changeUsernameButton = document.getElementById('name-change-btn');
+        changeUsernameButton = document.getElementById('name-change-btn'),
+        kickButton = document.getElementById('kick-btn');
 
   const banModal = document.getElementById('modal-ban-player'),
         banModalUsername = document.getElementById('modal-ban-player-username'),
@@ -17,6 +18,13 @@
         changeUsernameTitle = document.getElementById('modal-change-username-span'),
         changeUsernameInput = document.getElementById('modal-change-username-input');
 
+  const muteModal = document.getElementById('modal-mute-player'),
+        muteModalUsername = document.getElementById('modal-mute-player-username'),
+        muteModalTimePeriodSelect = document.getElementById('modal-mute-player-time-select'),
+        muteModalCustomTimePeriod = document.getElementById('modal-mute-player-time-custom'),
+        muteModalMuteButton = document.getElementById('modal-mute-player-btn'),
+        muteModalMercyButton = document.getElementById('modal-cancel-mute-btn');
+
   function addDaysToCurrentDate(days) {
     const currentDate = new Date();
     
@@ -29,6 +37,8 @@
   function resetModalInputs() {
     banModalTimePeriodSelect.value = 1;
     banModalCustomTimePeriod.value = "";
+    muteModalTimePeriodSelect.value = 1;
+    muteModalCustomTimePeriod.value = "";
     changeUsernameInput.value = "";
   }
 
@@ -52,13 +62,15 @@
         headers: {
           'Content-Type': 'application/json'
         }
-      }).then(res => {
-        if (res.status == 200) {
+      })
+      .then(res => res.json())
+      .then(json => {
+        if (json.success) {
           banModal.close();
           alert(`Banned ${account.username} for ${numberOfDays} day(s).`);
           window.location.reload();
         } else {
-          alert('Something went wrong. Please signout and back in, then try again.');
+          alert(json.error);
         }
       }).catch(err => {
         alert(`An unknown error occurred. Please report this issue.\n\n${err}`);
@@ -67,8 +79,75 @@
     }
   }
 
-  async function muteUser() {
-    alert('Not yet implemented! Please try again on another date.');
+  async function submitUnbanUserRequest() {
+    if (confirm(`Are you sure you want to unban '${account.username}'?`)) {
+      fetch(`/mod/unban/${account.id}`, {
+        method: 'POST',
+      })
+      .then(res => res.json())
+      .then(json => {
+        if (json.success) {
+          alert(`Successfully unbanned '${account.username}'`);
+          location.reload();
+        } else {
+          alert(json.error);
+        }
+      });
+    }
+  }
+
+  async function submitMuteUserRequest() {
+    if (muteModalTimePeriodSelect.value === -1) {
+      if (muteModalCustomTimePeriod.value == "" || muteModalCustomTimePeriod.value == null) {
+        alert('Please enter a new period of time:');
+        return;
+      }
+    }
+
+    let numberOfDays = muteModalTimePeriodSelect.value == -1 ? muteModalCustomTimePeriod.value : muteModalTimePeriodSelect.value;
+    let muteDate = addDaysToCurrentDate(numberOfDays);
+
+    if (confirm(`Are you SURE you want to mute '${account.username}' for ${numberOfDays} day(s)?`)) {
+      fetch(`/mod/mute/${account.id}`, {
+        method: 'POST',
+        body: JSON.stringify({
+          muted_until: muteDate.toISOString()
+        }),
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
+      .then(res => res.json())
+      .then(json => {
+        if (json.success) {
+          muteModal.close();
+          alert(`Muted ${account.username} for ${numberOfDays} day(s).`);
+          window.location.reload();
+        } else {
+          alert(json.error);
+        }
+      }).catch(err => {
+        alert(`An unknown error occurred. Please report this issue.\n\n${err}`);
+        console.log(err);
+      });
+    }
+  }
+
+  async function submitUnmuteUserRequest() {
+    if (confirm(`Are you sure you want to unmute '${account.username}'?`)) {
+      fetch(`/mod/unmute/${account.id}`, {
+        method: 'POST',
+      })
+      .then(res => res.json())
+      .then(json => {
+        if (json.success) {
+          alert(`Successfully unmuted '${account.username}'`);
+          location.reload();
+        } else {
+          alert(json.error);
+        }
+      });
+    }
   }
 
   async function submitChangeUsernameRequest(unban = false) {
@@ -100,7 +179,7 @@
           alert(json.error);
         } else {
           changeUsernameModal.close();
-          alert(`Successfully unbanned and changed ${account.username}'s username to '${newUsername}'.`);
+          alert(`Successfully ${unban ? 'unbanned and ' : ''}changed ${account.username}'s username to '${newUsername}'.`);
           location.href = `/mod/overview/${newUsername}`
         }
       }).catch(err => {
@@ -110,11 +189,30 @@
     }
   }
 
-  muteButton.addEventListener('click', muteUser);
+  async function submitKickUserRequest() {
+    if (confirm(`Are you sure you want to kick '${account.username}'?`)) {
+      fetch(`/mod/kick/${account.id}`, {
+        method: 'POST',
+      })
+      .then(res => res.json())
+      .then(json => {
+        if (json.success) {
+          alert(`Successfully kicked '${account.username}'`);
+          location.reload();
+        } else {
+          alert(json.error);
+        }
+      });
+    }
+  }
 
   banButton.addEventListener('click', (event) => {
-    resetModalInputs();
-    banModal.showModal();
+    if (account.banned_until) {
+      submitUnbanUserRequest();
+    } else {
+      resetModalInputs();
+      banModal.showModal();
+    }
   });
   banModalMercyButton.addEventListener('click', (event) => {
     banModal.close();
@@ -126,6 +224,29 @@
       banModalCustomTimePeriod.classList.remove('hidden');
     } else {
       banModalCustomTimePeriod.classList.add('hidden');
+    }
+  });
+
+  muteButton.addEventListener('click', (event) => {
+    if (account.muted_until) {
+      submitUnmuteUserRequest();
+    } else {
+      resetModalInputs();
+      muteModal.showModal();
+    }
+  });
+  muteModalMuteButton.addEventListener('click', (event) => {
+    submitMuteUserRequest();
+  });
+  muteModalMercyButton.addEventListener('click', (event) => {
+    muteModal.close();
+  });
+  muteModalTimePeriodSelect.addEventListener('change', (event) => {
+    const newValue = event.target.value;
+    if (newValue == -1) {
+      muteModalCustomTimePeriod.classList.remove('hidden');
+    } else {
+      muteModalCustomTimePeriod.classList.add('hidden');
     }
   });
 
@@ -143,7 +264,19 @@
     changeUsernameModal.close();
   });
 
+  kickButton.addEventListener('click', (event) => {
+    submitKickUserRequest();
+  });
+
   banModalUsername.textContent = account.username;
+  muteModalUsername.textContent = account.username;
   changeUsernameTitle.textContent = account.username;
+
+  if (account.banned_until) {
+    document.getElementById('banned-until-display').textContent = (new Date(account.banned_until)).toLocaleString();
+  }
+  if (account.muted_until) {
+    document.getElementById('muted-until-display').textContent = (new Date(account.muted_until)).toLocaleString();
+  }
   resetModalInputs();
 </script>
