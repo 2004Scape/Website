@@ -401,8 +401,8 @@ export default async function (app: FastifyInstance) {
                 }
             }
 
-            const oneHourBefore = toDbDate(timestamp - (1000 * 60 * 60));
-            const tenMinutesAfter = toDbDate(timestamp + (1000 * 60 * 10));
+            const oneHourBefore = toDbDate(parseInt(timestamp) - (1000 * 60 * 60));
+            const tenMinutesAfter = toDbDate(parseInt(timestamp) + (1000 * 60 * 10));
 
             const logs = await db.selectFrom('public_chat').select(['timestamp', 'coord', 'message', 'world'])
                 .innerJoin('account', 'public_chat.account_id', 'account.id').select('account.username')
