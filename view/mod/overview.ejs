@@ -49,7 +49,7 @@ Muted until: <strong id="muted-until-display"><%= account.muted_until.toISOStrin
 <div style="height: 500px; overflow-y: scroll">
     <% for (const chat of chats) { %>
         <div style="text-align: left">
-            <strong><%= toDisplayCoord(chat.coord) %></strong>,
+            <a href="/mod/chat?coord=<%= chat.coord %>&world=<%= chat.world %>&timestamp=<%= chat.timestamp.getTime() %>"><%= toDisplayCoord(chat.coord) %></a>,
             World: <strong><%= chat.world - 9 %></strong>
 
             <span style="float: right">
