@@ -1,0 +1,31 @@
+<%- include('../_partial/header.ejs', { title: 'Wealth Log' }); %>
+<%- include('../_components/frame-top.ejs'); %>
+<%- include('../_components/content-start.ejs'); %>
+<%- include('../_components/title-box.ejs', { title: 'Wealth Log' }); %>
+
+<%- include('../_components/content-body-start.ejs'); %>
+<h3><a href="/mod/overview/<%= username %>"><%= toDisplayName(username) %>'s</a> Wealth Log</h3>
+
+<div style="height: 500px; overflow-y: scroll">
+    <% for (const log of logs) { %>
+        <div style="text-align: left">
+            <strong>
+                <%= toDisplayCoord(log.coord) %>,
+                World: <%= log.world - 9 %>
+            </strong>
+
+            <span style="float: right">
+                <%= log.timestamp.toISOString().replace("T"," ").substring(0, 19); %>
+            </span>
+
+            <br>
+
+            <%= log.event %>
+        </div>
+        <hr>
+    <% } %>
+</div>
+<%- include('../_components/content-body-end.ejs'); %>
+
+<%- include('../_components/content-end.ejs'); %>
+<%- include('../_partial/footer.ejs'); %>

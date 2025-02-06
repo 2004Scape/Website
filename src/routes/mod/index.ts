@@ -340,4 +340,29 @@ export default async function (app: FastifyInstance) {
 
         return res.status(200).send({ success: true });
     });
+
+    app.get('/wealth/:username', async (req: any, res: any) => {
+        try {
+            const { username } = req.params;
+
+            if (!req.session.account || req.session.account.staffmodlevel < 1) {
+                return res.redirect(`/account/login?redirectUrl=/mod/wealth/${username}`, 302);
+            }
+
+            return res.view('mod/wealth', {
+                toDisplayName,
+                toDisplayCoord,
+                username,
+                logs: await db.selectFrom('account_session').select(['timestamp', 'coord', 'event', 'world'])
+                    .innerJoin('account', 'account_session.account_id', 'account.id').select('account.username')
+                    .where('profile', '=', 'beta')
+                    .where('username', '=', username)
+                    .where('event_type', '=', LoggerEventType.WEALTH)
+                    .orderBy('timestamp desc').execute()
+            });
+        } catch (err) {
+            console.error(err);
+            res.redirect('/', 302);
+        }
+    });
 }

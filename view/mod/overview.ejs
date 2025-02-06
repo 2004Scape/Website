@@ -106,6 +106,8 @@ Muted until: <strong id="muted-until-display"><%= account.muted_until.toISOStrin
 
 <hr>
 <h3>Wealth Events</h3>
+<a href="/mod/wealth/<%= account.username %>">View Full Log</a>
+<br><br>
 
 <div style="height: 500px; overflow-y: scroll">
     <% for (const log of wealth) { %>
