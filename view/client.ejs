@@ -54,11 +54,46 @@
             margin: 0;
             padding: 0;
         }
+
+        .acknowledge {
+            cursor: pointer;
+            color: #ff0000;
+            font-weight: bold;
+        }
+
+        .capture-interest {
+            animation: capture-interest 2s linear 0.5s infinite normal forwards;
+            color: #ff0000;
+            font-weight: bold;
+        }
+
+        @keyframes capture-interest {
+            0% {
+                opacity: 0.3;
+            }
+
+            100% {
+                opacity: 1.0;
+            }
+        }
     </style>
 
     <script>
         function hideTop() {
             document.getElementById('gameframe-top').style.display = 'none';
+        }
+ 
+        function hideNotification() {
+            document.getElementById('notification').style.display = 'none';
+
+            localStorage.setItem('hideNotification', true);
+        }
+
+        function loadSettings() {
+            let notify = localStorage.getItem('hideNotification');
+            if (notify === 'true') {
+                hideNotification();
+            }
         }
     </script>
 </head>
@@ -77,11 +112,23 @@
                     <a onclick="window.open('https://lostcity.rs/c/2004scape/14', 'Forums', 'width=800,height=600');">Forums</a> -
                     <a onclick="window.open('https://lostcity.markets', 'Markets', 'width=800,height=600');">Markets</a>
                 </div>
+
+                <div id="notification">
+                    <br>
+                    <span class="capture-interest">No multilogging!</span><br>
+                    <strong>Do not play your alternate accounts at the same time. This is bannable.</strong>
+
+                    <div class="acknowledge" onclick="hideNotification();">[ I Understand ]</div>
+                </div>
             </div>
 
             <iframe class="gameframe" src='<%= world.address %>/rs2.cgi?plugin=<%= method %>&world=<%= world.id %>&lowmem=<%= detail %>' allowfullscreen></iframe>
         </div>
     </center>
+
+    <script>
+        loadSettings();
+    </script>
 </body>
 
 </html>
