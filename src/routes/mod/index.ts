@@ -68,7 +68,7 @@ export default async function (app: FastifyInstance) {
                 toDisplayCoord,
                 account,
                 sessions: await db.selectFrom('session').where('account_id', '=', account.id)
-                    .orderBy('timestamp desc').limit(100).selectAll().execute(),
+                    .orderBy('timestamp desc').selectAll().execute(),
                 chats: await db.selectFrom('public_chat').where('account_id', '=', account.id)
                     .orderBy('timestamp desc').limit(100).selectAll().execute(),
                 pms: await db.selectFrom('private_chat').where('account_id', '=', account.id)
