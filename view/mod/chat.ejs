@@ -8,7 +8,8 @@
     <% for (const log of logs) { %>
         <div style="text-align: left">
             <strong>
-                <%= toDisplayCoord(log.coord) %>,
+                <% const coord = toAbsolute(log.coord); %>
+                <a target="_blank" href="https://mejrs.github.io/historical?era=rs2_2004_06_01&p=<%= coord.level %>&x=<%= coord.x %>&y=<%= coord.z %>"><%= toDisplayCoord(log.coord) %></a>,
                 World: <%= log.world - 9 %>
             </strong>
 

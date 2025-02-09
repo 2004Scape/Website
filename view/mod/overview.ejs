@@ -55,7 +55,8 @@ Logged into World <%= account.logged_in - 9 %>
 <div style="height: 500px; overflow-y: scroll">
     <% for (const chat of chats) { %>
         <div style="text-align: left">
-            <a href="/mod/chat?coord=<%= chat.coord %>&world=<%= chat.world %>&timestamp=<%= chat.timestamp.getTime() %>"><%= toDisplayCoord(chat.coord) %></a>,
+            <% const coord = toAbsolute(chat.coord); %>
+            <a target="_blank" href="https://mejrs.github.io/historical?era=rs2_2004_06_01&p=<%= coord.level %>&x=<%= coord.x %>&y=<%= coord.z %>"><%= toDisplayCoord(chat.coord) %></a>,
             World: <strong><%= chat.world - 9 %></strong>
 
             <span style="float: right">
@@ -65,6 +66,10 @@ Logged into World <%= account.logged_in - 9 %>
             <br>
 
             <%= chat.message %>
+
+            <span style="float: right">
+                <a href="/mod/chat?coord=<%= chat.coord %>&world=<%= chat.world %>&timestamp=<%= chat.timestamp.getTime() %>">More context</a>,
+            </span>
         </div>
         <hr>
     <% } %>
@@ -89,7 +94,7 @@ Logged into World <%= account.logged_in - 9 %>
             <%= pm.message %>
 
             <span style="float: right">
-                <a href="/mod/conversation?from=<%= account.username %>&to=<%= pm.username %>">See context</a>
+                <a href="/mod/conversation?from=<%= account.username %>&to=<%= pm.username %>">More context</a>
             </span>
         </div>
         <hr>
@@ -104,7 +109,8 @@ Logged into World <%= account.logged_in - 9 %>
 <div style="height: 500px; overflow-y: scroll">
     <% for (const log of logs) { %>
         <div style="text-align: left">
-            <%= toDisplayCoord(log.coord) %>,
+            <% const coord = toAbsolute(log.coord); %>
+            <a target="_blank" href="https://mejrs.github.io/historical?era=rs2_2004_06_01&p=<%= coord.level %>&x=<%= coord.x %>&y=<%= coord.z %>"><%= toDisplayCoord(log.coord) %></a>,
             World: <strong><%= log.world - 9 %></strong>
 
             <span style="float: right">
@@ -127,7 +133,8 @@ Logged into World <%= account.logged_in - 9 %>
 <div style="height: 500px; overflow-y: scroll">
     <% for (const log of wealth) { %>
         <div style="text-align: left">
-            <a href="/mod/item?coord=<%= log.coord %>&world=<%= log.world %>&timestamp=<%= log.timestamp.getTime() %>"><%= toDisplayCoord(log.coord) %></a>,
+            <% const coord = toAbsolute(log.coord); %>
+            <a target="_blank" href="https://mejrs.github.io/historical?era=rs2_2004_06_01&p=<%= coord.level %>&x=<%= coord.x %>&y=<%= coord.z %>"><%= toDisplayCoord(log.coord) %></a>,
             World: <strong><%= log.world - 9 %></strong>
 
             <span style="float: right">
@@ -137,6 +144,10 @@ Logged into World <%= account.logged_in - 9 %>
             <br>
 
             <%= log.event %>
+
+            <span style="float: right">
+                <a href="/mod/item?coord=<%= log.coord %>&world=<%= log.world %>&timestamp=<%= log.timestamp.getTime() %>">More context</a>
+            </span>
         </div>
         <hr>
     <% } %>

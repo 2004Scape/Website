@@ -66,6 +66,7 @@ export default async function (app: FastifyInstance) {
             return res.view('mod/overview', {
                 toDisplayName,
                 toDisplayCoord,
+                toAbsolute,
                 account,
                 sessions: await db.selectFrom('session').where('account_id', '=', account.id)
                     .orderBy('timestamp desc').selectAll().execute(),
@@ -94,6 +95,7 @@ export default async function (app: FastifyInstance) {
             return res.view('mod/reports', {
                 toDisplayName,
                 toDisplayCoord,
+                toAbsolute,
                 reports: await db.selectFrom('report').selectAll('report')
                     .innerJoin('account', 'report.account_id', 'account.id').select('account.username')
                     .orderBy('timestamp desc').execute(),
@@ -375,6 +377,7 @@ export default async function (app: FastifyInstance) {
             return res.view('mod/wealth', {
                 toDisplayName,
                 toDisplayCoord,
+                toAbsolute,
                 account,
                 logs: await db.selectFrom('account_session').select(['timestamp', 'coord', 'event', 'world'])
                     .where('profile', '=', 'beta')
@@ -410,6 +413,7 @@ export default async function (app: FastifyInstance) {
             return res.view('mod/events', {
                 toDisplayName,
                 toDisplayCoord,
+                toAbsolute,
                 account,
                 logs: await db.selectFrom('account_session').select(['timestamp', 'coord', 'event', 'world'])
                     .where('profile', '=', 'beta')
@@ -465,6 +469,7 @@ export default async function (app: FastifyInstance) {
             return res.view('mod/chat', {
                 toDisplayName,
                 toDisplayCoord,
+                toAbsolute,
                 logs
             });
         } catch (err) {
@@ -516,6 +521,7 @@ export default async function (app: FastifyInstance) {
             return res.view('mod/item', {
                 toDisplayName,
                 toDisplayCoord,
+                toAbsolute,
                 logs
             });
         } catch (err) {
@@ -546,6 +552,7 @@ export default async function (app: FastifyInstance) {
             return res.view('mod/public', {
                 toDisplayName,
                 toDisplayCoord,
+                toAbsolute,
                 account,
                 chats: await db.selectFrom('public_chat').where('account_id', '=', account.id)
                     .orderBy('timestamp desc').selectAll().execute(),
@@ -578,6 +585,7 @@ export default async function (app: FastifyInstance) {
             return res.view('mod/private', {
                 toDisplayName,
                 toDisplayCoord,
+                toAbsolute,
                 account,
                 chats: await db.selectFrom('private_chat').where('account_id', '=', account.id)
                     .leftJoin('account', 'private_chat.to_account_id', 'account.id')
@@ -622,6 +630,7 @@ export default async function (app: FastifyInstance) {
             return res.view('mod/conversation', {
                 toDisplayName,
                 toDisplayCoord,
+                toAbsolute,
                 fromAcc,
                 toAcc,
                 pms: await db.selectFrom('private_chat')
