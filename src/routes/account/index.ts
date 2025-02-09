@@ -1,5 +1,6 @@
 import bcrypt from 'bcrypt';
 import fs from 'fs';
+import { pwnedPassword } from 'hibp';
 
 import { FastifyInstance } from 'fastify';
 
@@ -94,6 +95,11 @@ export default async function (app: FastifyInstance) {
 
         if (password !== password2) {
             req.session.error = 'Your passwords do not match.';
+            return res.redirect('/account', 302);
+        }
+
+        if (await pwnedPassword(password)) {
+            req.session.createError = 'Your chosen password is too insecure to use.';
             return res.redirect('/account', 302);
         }
 

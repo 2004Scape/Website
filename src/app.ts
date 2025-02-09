@@ -8,6 +8,7 @@ import Static from '@fastify/static';
 import View from '@fastify/view';
 import Cookie from '@fastify/cookie';
 import Session from '@fastify/session';
+import RateLimit from '@fastify/rate-limit';
 import ejs from 'ejs';
 
 import Environment from '#/util/Environment.js';
@@ -37,6 +38,11 @@ fastify.register(Session, {
     cookie: {
         secure: false
     }
+});
+
+await fastify.register(RateLimit, {
+    max: 10,
+    timeWindow: 1000 * 5
 });
 
 fastify.setNotFoundHandler((request, reply) => {
