@@ -451,8 +451,8 @@ export default async function (app: FastifyInstance) {
                 }
             }
 
-            const oneHourBefore = toDbDate(parseInt(timestamp) - (1000 * 60 * 60));
-            const tenMinutesAfter = toDbDate(parseInt(timestamp) + (1000 * 60 * 10));
+            const fiveMinutesBefore = toDbDate(parseInt(timestamp) - (1000 * 60 * 5));
+            const fiveMinutesAfter = toDbDate(parseInt(timestamp) + (1000 * 60 * 5));
 
             const logs = await db.selectFrom('account_session').select(['timestamp', 'coord', 'event', 'world'])
                 .innerJoin('account', 'account_session.account_id', 'account.id').select('account.username')
@@ -464,8 +464,8 @@ export default async function (app: FastifyInstance) {
                         eb('coord', '=', c)
                     )
                 ))
-                .where('timestamp', '<', tenMinutesAfter)
-                .where('timestamp', '>', oneHourBefore)
+                .where('timestamp', '<', fiveMinutesAfter)
+                .where('timestamp', '>', fiveMinutesBefore)
                 .orderBy('timestamp desc').execute();
 
             return res.view('mod/item', {
