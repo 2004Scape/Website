@@ -1,4 +1,5 @@
 import bcrypt from 'bcrypt';
+import { pwnedPassword } from 'hibp';
 
 import { db } from '#/db/query.js';
 
@@ -138,6 +139,11 @@ export default function (f: any, opts: any, next: any) {
                 req.session.createStep = CreateStep.USERNAME;
                 req.session.createError = displayNameCheck.message;
                 delete req.session.createUsername;
+                return res.redirect('/create', 302);
+            }
+
+            if (await pwnedPassword(password)) {
+                req.session.createError = 'Your chosen password is too insecure to use.';
                 return res.redirect('/create', 302);
             }
 
