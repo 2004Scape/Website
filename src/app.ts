@@ -45,7 +45,12 @@ await fastify.register(RateLimit, {
     timeWindow: 1000 * 5
 });
 
-fastify.setNotFoundHandler((request, reply) => {
+fastify.setNotFoundHandler({
+    preHandler: fastify.rateLimit({
+        max: 5,
+        timeWindow: 1000 * 5
+    })
+}, (request, reply) => {
     reply.status(404).send();
 });
 

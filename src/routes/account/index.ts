@@ -57,7 +57,12 @@ export default async function (app: FastifyInstance) {
         });
     });
 
-    app.post('/login', async (req: any, res: any) => {
+    app.post('/login', {
+        preHandler: app.rateLimit({
+            max: 1,
+            timeWindow: 1000
+        })
+    }, async (req: any, res: any) => {
         const { username, password } = req.body;
 
         const account = await db.selectFrom('account').where('username', '=', toSafeName(username)).selectAll().executeTakeFirst();
