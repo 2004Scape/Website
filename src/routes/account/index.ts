@@ -99,7 +99,7 @@ export default async function (app: FastifyInstance) {
         }
 
         if (await pwnedPassword(password)) {
-            req.session.createError = 'Your chosen password is too insecure to use.';
+            req.session.error = 'Your chosen password is too insecure to use.';
             return res.redirect('/account', 302);
         }
 
