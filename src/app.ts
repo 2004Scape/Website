@@ -41,7 +41,7 @@ fastify.register(Session, {
 });
 
 await fastify.register(RateLimit, {
-    max: 10,
+    max: 100,
     timeWindow: 1000 * 5
 });
 
