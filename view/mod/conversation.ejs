@@ -9,7 +9,7 @@
         <div style="text-align: left">
             <strong><a href="/mod/overview/<%= pm.account_id === fromAcc.id ? fromAcc.username : toAcc.username %>"><%= toDisplayName(pm.account_id === fromAcc.id ? fromAcc.username : toAcc.username) %></a></strong>
             ->
-            <strong><a href="/mod/overview/<%= pm.account_id === toAcc.id ? toAcc.username : fromAcc.username  %>"><%= toDisplayName(pm.account_id === toAcc.id ? toAcc.username : fromAcc.username) %></a></strong>
+            <strong><a href="/mod/overview/<%= pm.to_account_id === toAcc.id ? toAcc.username : fromAcc.username  %>"><%= toDisplayName(pm.to_account_id === toAcc.id ? toAcc.username : fromAcc.username) %></a></strong>
 
             <span style="float: right">
                 <%= pm.timestamp.toISOString().replace("T"," ").substring(0, 19); %>
