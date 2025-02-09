@@ -427,4 +427,55 @@ export default async function (app: FastifyInstance) {
             res.redirect('/', 302);
         }
     });
+
+    app.get('/item', async (req: any, res: any) => {
+        try {
+            const { coord, world, timestamp } = req.query;
+
+            if (!req.session.account || req.session.account.staffmodlevel < 1) {
+                return res.redirect(`/account/login?redirectUrl=/mod/item?coord=${coord}&world=${world}&timestamp=${timestamp}`, 302);
+            }
+
+            if (typeof coord === 'undefined' || typeof world === 'undefined' || typeof timestamp === 'undefined') {
+                return res.redirect('/', 302);
+            }
+
+            const center = toAbsolute(coord);
+            const topLeft = { level: center.level, x: center.x - 15, z: center.z - 15 };
+            const bottomRight = { level: center.level, x: center.x + 15, z: center.z + 15 };
+
+            const allCoords: number[] = [];
+            for (let x = topLeft.x; x <= bottomRight.x; x++) {
+                for (let z = topLeft.z; z <= bottomRight.z; z++) {
+                    allCoords.push(toCoord(center.level, x, z));
+                }
+            }
+
+            const oneHourBefore = toDbDate(parseInt(timestamp) - (1000 * 60 * 60));
+            const tenMinutesAfter = toDbDate(parseInt(timestamp) + (1000 * 60 * 10));
+
+            const logs = await db.selectFrom('account_session').select(['timestamp', 'coord', 'event', 'world'])
+                .innerJoin('account', 'account_session.account_id', 'account.id').select('account.username')
+                .where('profile', '=', 'beta')
+                .where('world', '=', world)
+                .where('event_type', '=', LoggerEventType.WEALTH)
+                .where((eb: any) => eb.or(
+                    allCoords.map(c =>
+                        eb('coord', '=', c)
+                    )
+                ))
+                .where('timestamp', '<', tenMinutesAfter)
+                .where('timestamp', '>', oneHourBefore)
+                .orderBy('timestamp desc').execute();
+
+            return res.view('mod/item', {
+                toDisplayName,
+                toDisplayCoord,
+                logs
+            });
+        } catch (err) {
+            console.error(err);
+            res.redirect('/', 302);
+        }
+    });
 }

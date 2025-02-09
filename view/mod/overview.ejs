@@ -94,7 +94,8 @@ Logged into World <%= account.logged_in - 9 %>
 <div style="height: 500px; overflow-y: scroll">
     <% for (const log of logs) { %>
         <div style="text-align: left">
-            <strong><%= toDisplayCoord(log.coord) %></strong>
+            <%= toDisplayCoord(log.coord) %>,
+            World: <strong><%= log.world - 9 %></strong>
 
             <span style="float: right">
                 <%= log.timestamp.toISOString().replace("T"," ").substring(0, 19); %>
@@ -116,7 +117,8 @@ Logged into World <%= account.logged_in - 9 %>
 <div style="height: 500px; overflow-y: scroll">
     <% for (const log of wealth) { %>
         <div style="text-align: left">
-            <strong><%= toDisplayCoord(log.coord) %></strong>
+            <a href="/mod/item?coord=<%= log.coord %>&world=<%= log.world %>&timestamp=<%= log.timestamp.getTime() %>"><%= toDisplayCoord(log.coord) %></a>,
+            World: <strong><%= log.world - 9 %></strong>
 
             <span style="float: right">
                 <%= log.timestamp.toISOString().replace("T"," ").substring(0, 19); %>
