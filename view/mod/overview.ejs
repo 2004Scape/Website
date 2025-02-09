@@ -21,6 +21,10 @@ Banned until: <strong id="banned-until-display"><%= account.banned_until.toISOSt
 Muted until: <strong id="muted-until-display"><%= account.muted_until.toISOString().replace("T"," ").substring(0, 19); %></strong>
 <% } %>
 
+<% if (account.logged_in !== 0) { %>
+Logged into World <%= account.logged_in - 9 %>
+<% } %>
+
 <div style="display: flex; justify-content: space-around;">
     <%- include('../_components/stones-button.ejs', { id: 'ban-btn', text: account.banned_until ? 'Unban' : 'Ban', shiny: true, account }) %>
     <%- include('../_components/stones-button.ejs', { id: 'mute-btn', text: account.muted_until ? 'Unmute' : 'Mute', shiny: true }) %>
