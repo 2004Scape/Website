@@ -467,8 +467,8 @@ export default async function (app: FastifyInstance) {
                         eb('coord', '=', c)
                     )
                 ))
-                .where('timestamp', '<', sixMinutesBefore)
-                .where('timestamp', '>', sixMinutesAfter)
+                .where('timestamp', '<', sixMinutesAfter)
+                .where('timestamp', '>', sixMinutesBefore)
                 .orderBy('timestamp desc').execute();
 
             return res.view('mod/chat', {

@@ -69,7 +69,7 @@ Logged into World <%= account.logged_in - 9 %>
             <%= chat.message %>
 
             <span style="float: right">
-                <a href="/mod/chat?coord=<%= chat.coord %>&world=<%= chat.world - 9 %>&timestamp=<%= chat.timestamp.getTime() %>">More context</a>
+                <a href="/mod/chat?coord=<%= chat.coord %>&world=<%= chat.world %>&timestamp=<%= chat.timestamp.getTime() %>">More context</a>
             </span>
         </div>
         <hr>
@@ -149,7 +149,7 @@ Logged into World <%= account.logged_in - 9 %>
             <%= log.event %>
 
             <span style="float: right">
-                <a href="/mod/item?coord=<%= log.coord %>&world=<%= log.world - 9 %>&timestamp=<%= log.timestamp.getTime() %>">More context</a>
+                <a href="/mod/item?coord=<%= log.coord %>&world=<%= log.world %>&timestamp=<%= log.timestamp.getTime() %>">More context</a>
             </span>
         </div>
         <hr>
