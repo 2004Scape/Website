@@ -31,6 +31,11 @@ function toCoord(level: number, x: number, z: number) {
     return (level << 28) | (x << 14) | z;
 }
 
+function embedCoord(coord: number) {
+    const { level, x, z } = toAbsolute(coord);
+    return `https://mejrs.github.io/historical?era=rs2_2004_06_01&p=${level}&x=${x}&y=${z}&z=4&layer=grid`;
+}
+
 const reasons = [
     'Offensive language',
     'Item scamming',
@@ -66,7 +71,7 @@ export default async function (app: FastifyInstance) {
             return res.view('mod/overview', {
                 toDisplayName,
                 toDisplayCoord,
-                toAbsolute,
+                embedCoord,
                 account,
                 sessions: await db.selectFrom('session').where('account_id', '=', account.id)
                     .orderBy('timestamp desc').selectAll().execute(),
@@ -95,7 +100,7 @@ export default async function (app: FastifyInstance) {
             return res.view('mod/reports', {
                 toDisplayName,
                 toDisplayCoord,
-                toAbsolute,
+                embedCoord,
                 reports: await db.selectFrom('report').selectAll('report')
                     .innerJoin('account', 'report.account_id', 'account.id').select('account.username')
                     .orderBy('timestamp desc').execute(),
@@ -377,7 +382,7 @@ export default async function (app: FastifyInstance) {
             return res.view('mod/wealth', {
                 toDisplayName,
                 toDisplayCoord,
-                toAbsolute,
+                embedCoord,
                 account,
                 logs: await db.selectFrom('account_session').select(['timestamp', 'coord', 'event', 'world'])
                     .where('profile', '=', 'beta')
@@ -413,7 +418,7 @@ export default async function (app: FastifyInstance) {
             return res.view('mod/events', {
                 toDisplayName,
                 toDisplayCoord,
-                toAbsolute,
+                embedCoord,
                 account,
                 logs: await db.selectFrom('account_session').select(['timestamp', 'coord', 'event', 'world'])
                     .where('profile', '=', 'beta')
@@ -450,8 +455,8 @@ export default async function (app: FastifyInstance) {
                 }
             }
 
-            const oneHourBefore = toDbDate(parseInt(timestamp) - (1000 * 60 * 60));
-            const tenMinutesAfter = toDbDate(parseInt(timestamp) + (1000 * 60 * 10));
+            const sixMinutesBefore = toDbDate(parseInt(timestamp) - (1000 * 60 * 6));
+            const sixMinutesAfter = toDbDate(parseInt(timestamp) + (1000 * 60 * 6));
 
             const logs = await db.selectFrom('public_chat').select(['timestamp', 'coord', 'message', 'world'])
                 .innerJoin('account', 'public_chat.account_id', 'account.id').select('account.username')
@@ -462,14 +467,14 @@ export default async function (app: FastifyInstance) {
                         eb('coord', '=', c)
                     )
                 ))
-                .where('timestamp', '<', tenMinutesAfter)
-                .where('timestamp', '>', oneHourBefore)
+                .where('timestamp', '<', sixMinutesBefore)
+                .where('timestamp', '>', sixMinutesAfter)
                 .orderBy('timestamp desc').execute();
 
             return res.view('mod/chat', {
                 toDisplayName,
                 toDisplayCoord,
-                toAbsolute,
+                embedCoord,
                 logs
             });
         } catch (err) {
@@ -501,8 +506,8 @@ export default async function (app: FastifyInstance) {
                 }
             }
 
-            const fiveMinutesBefore = toDbDate(parseInt(timestamp) - (1000 * 60 * 5));
-            const fiveMinutesAfter = toDbDate(parseInt(timestamp) + (1000 * 60 * 5));
+            const sixMinutesBefore = toDbDate(parseInt(timestamp) - (1000 * 60 * 6));
+            const sixMinutesAfter = toDbDate(parseInt(timestamp) + (1000 * 60 * 6));
 
             const logs = await db.selectFrom('account_session').select(['timestamp', 'coord', 'event', 'world'])
                 .innerJoin('account', 'account_session.account_id', 'account.id').select('account.username')
@@ -514,14 +519,14 @@ export default async function (app: FastifyInstance) {
                         eb('coord', '=', c)
                     )
                 ))
-                .where('timestamp', '<', fiveMinutesAfter)
-                .where('timestamp', '>', fiveMinutesBefore)
+                .where('timestamp', '<', sixMinutesAfter)
+                .where('timestamp', '>', sixMinutesBefore)
                 .orderBy('timestamp desc').execute();
 
             return res.view('mod/item', {
                 toDisplayName,
                 toDisplayCoord,
-                toAbsolute,
+                embedCoord,
                 logs
             });
         } catch (err) {
@@ -552,7 +557,7 @@ export default async function (app: FastifyInstance) {
             return res.view('mod/public', {
                 toDisplayName,
                 toDisplayCoord,
-                toAbsolute,
+                embedCoord,
                 account,
                 chats: await db.selectFrom('public_chat').where('account_id', '=', account.id)
                     .orderBy('timestamp desc').selectAll().execute(),
@@ -585,7 +590,7 @@ export default async function (app: FastifyInstance) {
             return res.view('mod/private', {
                 toDisplayName,
                 toDisplayCoord,
-                toAbsolute,
+                embedCoord,
                 account,
                 chats: await db.selectFrom('private_chat').where('account_id', '=', account.id)
                     .leftJoin('account', 'private_chat.to_account_id', 'account.id')
@@ -630,7 +635,7 @@ export default async function (app: FastifyInstance) {
             return res.view('mod/conversation', {
                 toDisplayName,
                 toDisplayCoord,
-                toAbsolute,
+                embedCoord,
                 fromAcc,
                 toAcc,
                 pms: await db.selectFrom('private_chat')

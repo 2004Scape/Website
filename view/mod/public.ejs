@@ -7,9 +7,10 @@
 <div style="height: 500px; overflow-y: scroll">
     <% for (const chat of chats) { %>
         <div style="text-align: left">
-            <% const coord = toAbsolute(chat.coord); %>
-            <a target="_blank" href="https://mejrs.github.io/historical?era=rs2_2004_06_01&p=<%= coord.level %>&x=<%= coord.x %>&y=<%= coord.z %>"><%= toDisplayCoord(chat.coord) %></a>,
-            World: <strong><%= chat.world - 9 %></strong>
+            <strong>
+                <a target="_blank" href="<%= embedCoord(chat.coord) %>"><%= toDisplayCoord(chat.coord) %></a>,
+                World: <%= log.world - 9 %>
+            </strong>
 
             <span style="float: right">
                 <%= chat.timestamp.toISOString().replace("T"," ").substring(0, 19); %>

@@ -1,7 +1,7 @@
-<%- include('../_partial/header.ejs', { title: 'Public Chat Messages', modals: true }); %>
+<%- include('../_partial/header.ejs', { title: 'Private Chat Messages', modals: true }); %>
 <%- include('../_components/frame-top.ejs'); %>
 <%- include('../_components/content-start.ejs'); %>
-<%- include('../_components/title-box.ejs', { title: account.username + "'s Public Chat Messages", links: [ { text: 'Overview', href: '/mod/overview/' + account.username } ] }); %>
+<%- include('../_components/title-box.ejs', { title: account.username + "'s Private Chat Messages", links: [ { text: 'Overview', href: '/mod/overview/' + account.username } ] }); %>
 
 <%- include('../_components/content-body-start.ejs'); %>
 <div style="height: 500px; overflow-y: scroll">
