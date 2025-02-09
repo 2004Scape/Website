@@ -1,16 +1,14 @@
-<%- include('../_partial/header.ejs', { title: 'Wealth Log' }); %>
+<%- include('../_partial/header.ejs', { title: 'Event Log' }); %>
 <%- include('../_components/frame-top.ejs'); %>
 <%- include('../_components/content-start.ejs'); %>
-<%- include('../_components/title-box.ejs', { title: account.username + "'s Wealth Log", links: [ { text: 'Overview', href: '/mod/overview/' + account.username } ] }); %>
+<%- include('../_components/title-box.ejs', { title: account.username + "'s Event Log", links: [ { text: 'Overview', href: '/mod/overview/' + account.username } ] }); %>
 
 <%- include('../_components/content-body-start.ejs'); %>
 <div style="height: 500px; overflow-y: scroll">
     <% for (const log of logs) { %>
         <div style="text-align: left">
-            <strong>
-                <a href="/mod/item?coord=<%= log.coord %>&world=<%= log.world %>&timestamp=<%= log.timestamp.getTime() %>"><%= toDisplayCoord(log.coord) %></a>,
-                World: <%= log.world - 9 %>
-            </strong>
+            <%= toDisplayCoord(log.coord) %>,
+            World: <strong><%= log.world - 9 %></strong>
 
             <span style="float: right">
                 <%= log.timestamp.toISOString().replace("T"," ").substring(0, 19); %>

@@ -1,0 +1,28 @@
+<%- include('../_partial/header.ejs', { title: 'Public Chat Messages', modals: true }); %>
+<%- include('../_components/frame-top.ejs'); %>
+<%- include('../_components/content-start.ejs'); %>
+<%- include('../_components/title-box.ejs', { title: account.username + "'s Public Chat Messages", links: [ { text: 'Overview', href: '/mod/overview/' + account.username } ] }); %>
+
+<%- include('../_components/content-body-start.ejs'); %>
+<div style="height: 500px; overflow-y: scroll">
+    <% for (const chat of chats) { %>
+        <div style="text-align: left">
+            <a href="/mod/chat?coord=<%= chat.coord %>&world=<%= chat.world %>&timestamp=<%= chat.timestamp.getTime() %>"><%= toDisplayCoord(chat.coord) %></a>,
+            World: <strong><%= chat.world - 9 %></strong>
+
+            <span style="float: right">
+                <%= chat.timestamp.toISOString().replace("T"," ").substring(0, 19); %>
+            </span>
+
+            <br>
+
+            <%= chat.message %>
+        </div>
+        <hr>
+    <% } %>
+</div>
+<%- include('../_components/content-body-end.ejs'); %>
+
+<%- include('../_components/content-end.ejs'); %>
+<%- include('../_partial/footer.ejs'); %>
+<%- include('../_scripts/mod/overview.ejs'); %>

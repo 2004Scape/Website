@@ -361,15 +361,60 @@ export default async function (app: FastifyInstance) {
                 return res.redirect(`/account/login?redirectUrl=/mod/wealth/${username}`, 302);
             }
 
+            const account = await db.selectFrom('account')
+                .where('username', '=', username)
+                .selectAll()
+                .executeTakeFirst();
+
+            if (!account) {
+                return res.view('mod/notfound', {
+                    username
+                });
+            }
+
             return res.view('mod/wealth', {
                 toDisplayName,
                 toDisplayCoord,
-                username,
+                account,
                 logs: await db.selectFrom('account_session').select(['timestamp', 'coord', 'event', 'world'])
-                    .innerJoin('account', 'account_session.account_id', 'account.id').select('account.username')
                     .where('profile', '=', 'beta')
-                    .where('username', '=', username)
+                    .where('account_id', '=', account.id)
                     .where('event_type', '=', LoggerEventType.WEALTH)
+                    .orderBy('timestamp desc').execute()
+            });
+        } catch (err) {
+            console.error(err);
+            res.redirect('/', 302);
+        }
+    });
+
+    app.get('/events/:username', async (req: any, res: any) => {
+        try {
+            const { username } = req.params;
+
+            if (!req.session.account || req.session.account.staffmodlevel < 1) {
+                return res.redirect(`/account/login?redirectUrl=/mod/events/${username}`, 302);
+            }
+
+            const account = await db.selectFrom('account')
+                .where('username', '=', username)
+                .selectAll()
+                .executeTakeFirst();
+
+            if (!account) {
+                return res.view('mod/notfound', {
+                    username
+                });
+            }
+
+            return res.view('mod/events', {
+                toDisplayName,
+                toDisplayCoord,
+                account,
+                logs: await db.selectFrom('account_session').select(['timestamp', 'coord', 'event', 'world'])
+                    .where('profile', '=', 'beta')
+                    .where('account_id', '=', account.id)
+                    .where('event_type', '!=', LoggerEventType.WEALTH)
                     .orderBy('timestamp desc').execute()
             });
         } catch (err) {
@@ -441,8 +486,8 @@ export default async function (app: FastifyInstance) {
             }
 
             const center = toAbsolute(coord);
-            const topLeft = { level: center.level, x: center.x - 15, z: center.z - 15 };
-            const bottomRight = { level: center.level, x: center.x + 15, z: center.z + 15 };
+            const topLeft = { level: center.level, x: center.x - 10, z: center.z - 10 };
+            const bottomRight = { level: center.level, x: center.x + 10, z: center.z + 10 };
 
             const allCoords: number[] = [];
             for (let x = topLeft.x; x <= bottomRight.x; x++) {
@@ -472,6 +517,123 @@ export default async function (app: FastifyInstance) {
                 toDisplayName,
                 toDisplayCoord,
                 logs
+            });
+        } catch (err) {
+            console.error(err);
+            res.redirect('/', 302);
+        }
+    });
+
+    app.get('/public/:username', async (req: any, res: any) => {
+        try {
+            const { username } = req.params;
+
+            if (!req.session.account || req.session.account.staffmodlevel < 1) {
+                return res.redirect(`/account/login?redirectUrl=/mod/public/${username}`, 302);
+            }
+
+            const account = await db.selectFrom('account')
+                .where('username', '=', username)
+                .selectAll()
+                .executeTakeFirst();
+
+            if (!account) {
+                return res.view('mod/notfound', {
+                    username
+                });
+            }
+
+            return res.view('mod/public', {
+                toDisplayName,
+                toDisplayCoord,
+                account,
+                chats: await db.selectFrom('public_chat').where('account_id', '=', account.id)
+                    .orderBy('timestamp desc').selectAll().execute(),
+            });
+        } catch (err) {
+            console.error(err);
+            res.redirect('/', 302);
+        }
+    });
+
+    app.get('/private/:username', async (req: any, res: any) => {
+        try {
+            const { username } = req.params;
+
+            if (!req.session.account || req.session.account.staffmodlevel < 1) {
+                return res.redirect(`/account/login?redirectUrl=/mod/private/${username}`, 302);
+            }
+
+            const account = await db.selectFrom('account')
+                .where('username', '=', username)
+                .selectAll()
+                .executeTakeFirst();
+
+            if (!account) {
+                return res.view('mod/notfound', {
+                    username
+                });
+            }
+
+            return res.view('mod/private', {
+                toDisplayName,
+                toDisplayCoord,
+                account,
+                chats: await db.selectFrom('private_chat').where('account_id', '=', account.id)
+                    .leftJoin('account', 'private_chat.to_account_id', 'account.id')
+                    .orderBy('timestamp desc').selectAll().execute(),
+            });
+        } catch (err) {
+            console.error(err);
+            res.redirect('/', 302);
+        }
+    });
+
+    app.get('/conversation', async (req: any, res: any) => {
+        try {
+            const { from, to } = req.query;
+
+            if (!req.session.account || req.session.account.staffmodlevel < 1) {
+                return res.redirect(`/account/login?redirectUrl=/mod/conversation?from=${from}&to=${to}`, 302);
+            }
+
+            const fromAcc = await db.selectFrom('account')
+                .where('username', '=', toSafeName(from))
+                .selectAll()
+                .executeTakeFirst();
+
+            if (!fromAcc) {
+                return res.view('mod/notfound', {
+                    username: from
+                });
+            }
+
+            const toAcc = await db.selectFrom('account')
+                .where('username', '=', toSafeName(to))
+                .selectAll()
+                .executeTakeFirst();
+
+            if (!toAcc) {
+                return res.view('mod/notfound', {
+                    username: to
+                });
+            }
+
+            return res.view('mod/conversation', {
+                toDisplayName,
+                toDisplayCoord,
+                fromAcc,
+                toAcc,
+                pms: await db.selectFrom('private_chat')
+                    .where((eb) => eb.or([
+                        eb('account_id', '=', fromAcc.id),
+                        eb('account_id', '=', toAcc.id)
+                    ]))
+                    .where((eb) => eb.or([
+                        eb('to_account_id', '=', fromAcc.id),
+                        eb('to_account_id', '=', toAcc.id)
+                    ]))
+                    .orderBy('timestamp desc').selectAll().execute(),
             });
         } catch (err) {
             console.error(err);

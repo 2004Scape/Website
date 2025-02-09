@@ -49,6 +49,8 @@ Logged into World <%= account.logged_in - 9 %>
 
 <hr>
 <h3>Public Chat Messages</h3>
+<a href="/mod/public/<%= account.username %>">View Full Log</a>
+<br><br>
 
 <div style="height: 500px; overflow-y: scroll">
     <% for (const chat of chats) { %>
@@ -70,6 +72,8 @@ Logged into World <%= account.logged_in - 9 %>
 
 <hr>
 <h3>Private Chat Messages</h3>
+<a href="/mod/private/<%= account.username %>">View Full Log</a>
+<br><br>
 
 <div style="height: 500px; overflow-y: scroll">
     <% for (const pm of pms) { %>
@@ -83,6 +87,10 @@ Logged into World <%= account.logged_in - 9 %>
             <br>
 
             <%= pm.message %>
+
+            <span style="float: right">
+                <a href="/mod/conversation?from=<%= account.username %>&to=<%= pm.username %>">See context</a>
+            </span>
         </div>
         <hr>
     <% } %>
@@ -90,6 +98,8 @@ Logged into World <%= account.logged_in - 9 %>
 
 <hr>
 <h3>Events</h3>
+<a href="/mod/events/<%= account.username %>">View Full Log</a>
+<br><br>
 
 <div style="height: 500px; overflow-y: scroll">
     <% for (const log of logs) { %>
