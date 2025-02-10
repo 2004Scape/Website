@@ -84,15 +84,28 @@
         }
  
         function hideNotification() {
-            document.getElementById('notification').style.display = 'none';
-
             localStorage.setItem('hideNotification', true);
+            loadSettings();
+        }
+
+        function hopNotification() {
+            localStorage.setItem('hopNotification', true);
+            loadSettings();
         }
 
         function loadSettings() {
-            let notify = localStorage.getItem('hideNotification');
-            if (notify === 'true') {
-                hideNotification();
+            let multilog = localStorage.getItem('hideNotification');
+            if (multilog === 'true') {
+                document.getElementById('notification').style.display = 'none';
+
+                let hopTimer = localStorage.getItem('hopNotification');
+                if (hopTimer === 'true') {
+                    document.getElementById('hopNotification').style.display = 'none';
+                } else {
+                    document.getElementById('hopNotification').style.display = 'block';
+                }
+            } else {
+                document.getElementById('notification').style.display = 'block';
             }
         }
     </script>
@@ -113,12 +126,20 @@
                     <a onclick="window.open('https://lostcity.markets', 'Markets', 'width=800,height=600');">Markets</a>
                 </div>
 
-                <div id="notification">
+                <div id="notification" style="display: none;">
                     <br>
                     <span class="capture-interest">No multilogging!</span><br>
                     <strong>Do not play your alternate accounts at the same time. This is bannable.</strong>
 
                     <div class="acknowledge" onclick="hideNotification();">[ I Understand ]</div>
+                </div>
+
+                <div id="hopNotification" style="display: none;">
+                    <br>
+                    <span class="capture-interest">World hop timer added!</span><br>
+                    <strong>There is a 45s hop for each world hop now. You will know if you're affected when you see "Login limit exceeded."</strong>
+
+                    <div class="acknowledge" onclick="hopNotification();">[ I Understand ]</div>
                 </div>
             </div>
 
