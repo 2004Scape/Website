@@ -91,6 +91,28 @@ export default async function (app: FastifyInstance) {
         }
     });
 
+    app.post('/note/:username', async (req: any, res: any) => {
+        try {
+            const { username } = req.params;
+
+            if (!req.session.account || req.session.account.staffmodlevel < 1) {
+                return res.redirect(`/account/login?redirectUrl=/mod/overview/${username}`, 302);
+            }
+
+            const { notes } = req.body;
+
+            await db.updateTable('account').set({
+                notes,
+                notes_updated: toDbDate(new Date())
+            }).where('username', '=', username).execute();
+
+            return res.redirect(`/mod/overview/${username}`, 302);
+        } catch (err) {
+            console.error(err);
+            res.redirect('/', 302);
+        }
+    })
+
     app.get('/reports', async (req: any, res: any) => {
         try {
             if (!req.session.account || req.session.account.staffmodlevel < 1) {
