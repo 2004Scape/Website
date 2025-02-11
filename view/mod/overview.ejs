@@ -174,4 +174,9 @@ Logged into World <%= account.logged_in - 9 %>
 
 <%- include('../_components/content-end.ejs'); %>
 <%- include('../_partial/footer.ejs'); %>
+
+<script>
+  <% const { password, ...sanitizedAccount } = account %>
+  const account = JSON.parse(`<%- JSON.stringify(sanitizedAccount) %>`);
+</script>
 <%- include('../_scripts/mod/overview.ejs'); %>
