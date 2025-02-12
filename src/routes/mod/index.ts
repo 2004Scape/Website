@@ -699,4 +699,27 @@ export default async function (app: FastifyInstance) {
             res.redirect('/', 302);
         }
     });
+
+    app.get('/active', async (req: any, res: any) => {
+        try {
+            if (!req.session.account || req.session.account.staffmodlevel < 1) {
+                return res.redirect('/account/login?redirectUrl=/mod/active', 302);
+            }
+
+            const recent = await db.selectFrom('account').select(['username', 'registration_ip', 'registration_date'])
+                .where('logged_in', '!=', 0)
+                .leftJoin('session', 'account.id', 'session.account_id').select(['ip', 'uid'])
+                .groupBy('id')
+                .orderBy('timestamp', 'desc')
+                .execute();
+
+            return res.view('mod/active', {
+                toDisplayName,
+                recent
+            });
+        } catch (err) {
+            console.error(err);
+            res.redirect('/', 302);
+        }
+    });
 }
