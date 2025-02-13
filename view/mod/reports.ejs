@@ -3,6 +3,9 @@
 <%- include('../_components/content-start.ejs'); %>
 <%- include('../_components/title-box.ejs', { title: "Report log" }); %>
 
+<center>Auto-refresh <input type="checkbox" id="auto-refresh-reports-checkbox"></center>
+<br>
+
 <%- include('../_components/content-body-start.ejs'); %>
 <h3>Reports</h3>
 
@@ -29,3 +32,4 @@
 
 <%- include('../_components/content-end.ejs'); %>
 <%- include('../_partial/footer.ejs'); %>
+<%- include('../_scripts/mod/reports.ejs'); %>
