@@ -1,0 +1,37 @@
+<script>
+  let reportsAutoRefreshInterval;
+  const reportsAutoRefreshCheckbox = document.getElementById('auto-refresh-reports-checkbox');
+
+  function updateSetInterval() {
+    reportsAutoRefreshInterval = setInterval(() => {
+      window.location.reload();
+    }, 30_000);
+  }
+
+  if (localStorage.getItem('reports_auto_refresh') === 'true') {
+    reportsAutoRefreshCheckbox.checked = true;
+    updateSetInterval();
+  }
+  
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible' && reportsAutoRefreshCheckbox.checked) {
+      window.location.reload();
+    } else if (document.visibilityState === 'hidden') {
+      clearInterval(reportsAutoRefreshInterval);
+      reportsAutoRefreshInterval = null;
+    }
+  });
+
+  reportsAutoRefreshCheckbox.addEventListener('change', (event) => {
+    if (reportsAutoRefreshInterval) {
+      clearInterval(reportsAutoRefreshInterval);
+      reportsAutoRefreshInterval = null;
+    }
+
+    localStorage.setItem('reports_auto_refresh', event.target.checked);
+
+    if (event.target.checked) {
+      updateSetInterval();
+    }
+  });
+</script>
