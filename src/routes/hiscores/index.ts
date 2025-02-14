@@ -62,9 +62,12 @@ export default function (f: any, opts: any, next: any) {
             .innerJoin('account', 'account.id', category.large ? 'hiscore_large.account_id' : 'hiscore.account_id')
             .select(['account_id', 'type', 'level', 'value', 'date', 'account.username'])
             .where('type', '=', category.id).where('profile', '=', profile.id)
-            .orderBy(category.level ? 'level' : 'value', 'desc').orderBy('date', 'asc').select((eb) =>
+            .select((eb) =>
                 eb.fn.agg<number>('row_number', [])
-                    .over((ob) => ob.partitionBy('type').orderBy(category.level ? 'level' : 'value', 'desc').orderBy('date', 'asc'))
+                    .over((ob) => category.level ?
+                        ob.partitionBy('type').orderBy('level', 'desc').orderBy('value', 'desc').orderBy('date', 'asc') :
+                        ob.partitionBy('type').orderBy('value', 'desc').orderBy('date', 'asc')
+                    )
                     .as('rank')
             );
 
@@ -79,9 +82,13 @@ export default function (f: any, opts: any, next: any) {
                 .select(['account_id', 'type'])
                 .select((eb) =>
                     eb.fn.agg<number>('row_number', [])
-                        .over((ob) => ob.partitionBy('type').orderBy(category.level ? 'level' : 'value', 'desc').orderBy('date', 'asc'))
+                        .over((ob) => category.level ?
+                            ob.partitionBy('type').orderBy('level', 'desc').orderBy('value', 'desc').orderBy('date', 'asc') :
+                            ob.partitionBy('type').orderBy('value', 'desc').orderBy('date', 'asc')
+                        )
                         .as('rank')
-                ).where('profile', '=', profile.id);
+                )
+                .where('profile', '=', profile.id);
 
             const usernameRank = await db.selectFrom(usernameRankQuery.as('h'))
                 .innerJoin('account', 'account.id', 'h.account_id')
@@ -107,7 +114,7 @@ export default function (f: any, opts: any, next: any) {
             date: string,
             rank?: number,
             highlighted?: boolean
-        }[] = await query.execute();
+        }[] = await query.orderBy('rank').execute();
 
         if (selectedRank > 0) {
             const row = results.find(r => r.rank == selectedRank);
@@ -148,7 +155,7 @@ export default function (f: any, opts: any, next: any) {
             .select([...columnsToSelect])
             .select((eb) =>
                 eb.fn.agg<number>('row_number', [])
-                    .over((ob) => ob.partitionBy('type').orderBy('level', 'desc').orderBy('date', 'asc'))
+                    .over((ob) => ob.partitionBy('type').orderBy('level', 'desc').orderBy('value', 'desc').orderBy('date', 'asc'))
                     .as('rank')
             ).where('profile', '=', profile.id);
 
@@ -168,7 +175,7 @@ export default function (f: any, opts: any, next: any) {
             value: number | bigint,
             date: string,
             rank?: number
-        }[] = await combinedQuery.execute();
+        }[] = await combinedQuery.orderBy('rank').execute();
 
         if (results.length === 0) {
             return res.view('hiscores/no_results', {
