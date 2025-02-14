@@ -93,6 +93,11 @@
             loadSettings();
         }
 
+        function rightNotification() {
+            localStorage.setItem('rightNotification', true);
+            loadSettings();
+        }
+
         function loadSettings() {
             let multilog = localStorage.getItem('hideNotification');
             if (multilog === 'true') {
@@ -101,6 +106,13 @@
                 let hopTimer = localStorage.getItem('hopNotification');
                 if (hopTimer === 'true') {
                     document.getElementById('hopNotification').style.display = 'none';
+
+                    let streamRights = localStorage.getItem('rightNotification');
+                    if (streamRights === 'true') {
+                        document.getElementById('rightNotification').style.display = 'none';
+                    } else {
+                        document.getElementById('rightNotification').style.display = 'block';
+                    }
                 } else {
                     document.getElementById('hopNotification').style.display = 'block';
                 }
@@ -140,6 +152,14 @@
                     <strong>There is a 45s hop for each world hop now. You will know if you're affected when you see "Login limit exceeded."</strong>
 
                     <div class="acknowledge" onclick="hopNotification();">[ I Understand ]</div>
+                </div>
+
+                <div id="rightNotification" style="display: none;">
+                    <br>
+                    <span class="capture-interest">Right to stream!</span><br>
+                    <strong>The community has an ongoing effort to help streamers share the nostalgia with more people. <a target="_blank" href="https://twitch.uservoice.com/forums/310210-discover/suggestions/49470098-exception-for-a-game-mod-to-show-in-the-twitch-c">Show your support here!</a></strong>
+
+                    <div class="acknowledge" onclick="rightNotification();">[ Good luck ]</div>
                 </div>
             </div>
 
